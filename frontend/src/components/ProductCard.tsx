@@ -27,9 +27,9 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <Link
       to={`/products/${product.slug}`}
-      className="group block bg-white rounded-lg shadow hover:shadow-md transition-shadow overflow-hidden"
+      className="group block bg-white rounded-xl border border-ocean/5 shadow-sm hover:shadow-lg hover:-translate-y-1.5 hover:border-current-accent/20 transition-all duration-300 overflow-hidden"
     >
-      <div className="aspect-[4/3] bg-gray-100 relative overflow-hidden">
+      <div className="h-44 bg-gradient-to-br from-ocean-mist to-current-mist relative overflow-hidden">
         {product.primary_image ? (
           <img
             src={product.primary_image}
@@ -37,34 +37,37 @@ export default function ProductCard({ product }: ProductCardProps) {
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-300">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          <div className="w-full h-full flex items-center justify-center text-ocean-light/40">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
             </svg>
           </div>
         )}
         {!product.in_stock && (
-          <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-medium px-2 py-1 rounded">
+          <div className="absolute top-2 right-2 bg-red-100 text-red-600 text-[0.65rem] font-bold uppercase tracking-wide px-2 py-1 rounded">
             Out of Stock
           </div>
         )}
         {product.featured && product.in_stock && (
-          <div className="absolute top-2 left-2 bg-amber-500 text-white text-xs font-medium px-2 py-1 rounded">
+          <div className="absolute top-2 left-2 bg-sunbeam text-gray-900 text-[0.65rem] font-bold uppercase tracking-wide px-2 py-1 rounded">
             Featured
           </div>
         )}
       </div>
+
       <div className="p-4">
-        <p className="text-xs text-amber-600 font-medium mb-1">{product.category_name}</p>
-        <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-amber-600 transition-colors">
+        <p className="text-current-accent text-xs font-semibold uppercase tracking-wider mb-1">
+          {product.category_name}
+        </p>
+        <h3 className="font-[family-name:'Playfair_Display'] font-semibold text-gray-900 mb-1 group-hover:text-ocean transition-colors">
           {product.name}
         </h3>
         <div className="flex items-center justify-between mt-3">
-          <span className="text-lg font-bold text-gray-900">${product.price}</span>
+          <span className="text-lg font-bold text-ocean">${product.price}</span>
           <button
             onClick={handleAddToCart}
             disabled={!product.in_stock || adding}
-            className="bg-amber-500 hover:bg-amber-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-sm px-3 py-1.5 rounded-lg font-medium transition-colors"
+            className="bg-current-accent hover:bg-current-dark disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-xs font-semibold uppercase tracking-wide px-3 py-1.5 rounded-md transition-colors"
           >
             {adding ? 'Adding...' : 'Add to Cart'}
           </button>

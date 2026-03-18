@@ -43,7 +43,7 @@ export default function OrderConfirmationPage() {
   if (loading) {
     return (
       <div className="flex justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-current-accent" />
       </div>
     );
   }
@@ -51,8 +51,8 @@ export default function OrderConfirmationPage() {
   if (!order) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-16 text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Order Not Found</h2>
-        <Link to="/" className="text-amber-600 hover:text-amber-700 font-medium">
+        <h2 className="text-2xl font-bold text-ocean-deeper mb-4 font-[family-name:'Playfair_Display']">Order Not Found</h2>
+        <Link to="/" className="text-current-accent hover:text-current-dark font-medium">
           Go Home
         </Link>
       </div>
@@ -67,14 +67,14 @@ export default function OrderConfirmationPage() {
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Order Confirmed!</h1>
+        <h1 className="text-3xl font-bold text-ocean-deeper mb-2 font-[family-name:'Playfair_Display']">Order Confirmed!</h1>
         <p className="text-gray-500">
           Order #{order.order_number} <OrderStatusBadge status={order.status} />
         </p>
       </div>
 
-      <div className="bg-white rounded-lg shadow p-6 mb-6">
-        <h3 className="font-semibold text-gray-900 mb-4">Order Items</h3>
+      <div className="bg-white rounded-xl shadow-sm border border-ocean/5 p-6 mb-6">
+        <h3 className="font-semibold text-ocean-deeper mb-4">Order Items</h3>
         <div className="divide-y divide-gray-100">
           {order.items.map((item) => (
             <div key={item.id} className="py-3 flex justify-between">
@@ -87,7 +87,7 @@ export default function OrderConfirmationPage() {
           ))}
         </div>
 
-        <div className="border-t border-gray-200 pt-4 mt-4 space-y-2 text-sm">
+        <div className="border-t border-ocean/10 pt-4 mt-4 space-y-2 text-sm">
           <div className="flex justify-between text-gray-600">
             <span>Subtotal</span>
             <span>${order.subtotal}</span>
@@ -96,15 +96,15 @@ export default function OrderConfirmationPage() {
             <span>Tax</span>
             <span>${order.tax}</span>
           </div>
-          <div className="flex justify-between font-semibold text-gray-900 text-base pt-2">
+          <div className="flex justify-between font-bold text-ocean-deeper text-lg pt-2">
             <span>Total</span>
             <span>${order.total}</span>
           </div>
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow p-6 mb-8">
-        <h3 className="font-semibold text-gray-900 mb-3">Shipping Address</h3>
+      <div className="bg-white rounded-xl shadow-sm border border-ocean/5 p-6 mb-8">
+        <h3 className="font-semibold text-ocean-deeper mb-3">Shipping Address</h3>
         <p className="text-gray-600 text-sm">
           {order.shipping_first_name} {order.shipping_last_name}<br />
           {order.shipping_address_line1}<br />
@@ -116,14 +116,14 @@ export default function OrderConfirmationPage() {
       <div className="flex justify-center gap-4">
         <Link
           to="/products"
-          className="bg-amber-500 hover:bg-amber-600 text-white font-medium px-6 py-3 rounded-lg transition-colors"
+          className="bg-current-accent hover:bg-current-dark text-white font-medium px-6 py-3 rounded-lg transition-colors"
         >
           Continue Shopping
         </Link>
         {user && (
           <Link
             to="/orders"
-            className="border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium px-6 py-3 rounded-lg transition-colors"
+            className="border border-ocean/20 hover:bg-ocean-mist text-ocean font-medium px-6 py-3 rounded-lg transition-colors"
           >
             View Orders
           </Link>

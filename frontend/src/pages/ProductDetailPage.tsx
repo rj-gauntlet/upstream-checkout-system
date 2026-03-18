@@ -40,7 +40,7 @@ export default function ProductDetailPage() {
   if (loading) {
     return (
       <div className="flex justify-center py-20">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-current-accent" />
       </div>
     );
   }
@@ -48,8 +48,8 @@ export default function ProductDetailPage() {
   if (!product) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-16 text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Product Not Found</h2>
-        <Link to="/products" className="text-amber-600 hover:text-amber-700 font-medium">
+        <h2 className="text-2xl font-bold text-ocean-deeper mb-4 font-[family-name:'Playfair_Display']">Product Not Found</h2>
+        <Link to="/products" className="text-current-accent hover:text-current-dark font-medium">
           Back to Products
         </Link>
       </div>
@@ -58,7 +58,7 @@ export default function ProductDetailPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      <Link to="/products" className="text-amber-600 hover:text-amber-700 text-sm font-medium mb-6 inline-block">
+      <Link to="/products" className="text-current-accent hover:text-current-dark text-sm font-medium mb-6 inline-block">
         &larr; Back to Products
       </Link>
 
@@ -82,9 +82,9 @@ export default function ProductDetailPage() {
 
         {/* Details */}
         <div>
-          <p className="text-sm text-amber-600 font-medium mb-2">{product.category_name}</p>
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
-          <p className="text-3xl font-bold text-gray-900 mb-6">${product.price}</p>
+          <p className="text-sm text-current-accent font-medium mb-2">{product.category_name}</p>
+          <h1 className="text-3xl font-bold text-ocean-deeper mb-4 font-[family-name:'Playfair_Display']">{product.name}</h1>
+          <p className="text-3xl font-bold text-ocean mb-6">${product.price}</p>
 
           {product.description && (
             <div className="text-gray-600 mb-6 leading-relaxed">
@@ -96,12 +96,16 @@ export default function ProductDetailPage() {
           <div className="mb-6">
             {product.in_stock ? (
               <span className="inline-flex items-center gap-1.5 text-green-600 text-sm font-medium">
-                <span className="w-2 h-2 bg-green-500 rounded-full" />
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
                 In Stock ({product.stock} available)
               </span>
             ) : (
               <span className="inline-flex items-center gap-1.5 text-red-600 text-sm font-medium">
-                <span className="w-2 h-2 bg-red-500 rounded-full" />
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
                 Out of Stock
               </span>
             )}
@@ -109,20 +113,20 @@ export default function ProductDetailPage() {
 
           {/* Quantity + Add to Cart */}
           {product.in_stock && (
-            <div className="flex items-center gap-4">
-              <div className="flex items-center border border-gray-300 rounded-lg">
+            <div className="space-y-4">
+              <div className="flex items-center border border-ocean/20 rounded-lg w-fit">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="px-3 py-2 text-gray-600 hover:text-gray-900 transition-colors"
+                  className="px-3 py-2 text-gray-600 hover:bg-ocean-mist transition-colors rounded-l-lg"
                 >
                   -
                 </button>
-                <span className="px-4 py-2 text-sm font-medium border-x border-gray-300">
+                <span className="px-4 py-2 text-sm font-medium border-x border-ocean/20">
                   {quantity}
                 </span>
                 <button
                   onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
-                  className="px-3 py-2 text-gray-600 hover:text-gray-900 transition-colors"
+                  className="px-3 py-2 text-gray-600 hover:bg-ocean-mist transition-colors rounded-r-lg"
                 >
                   +
                 </button>
@@ -130,7 +134,7 @@ export default function ProductDetailPage() {
               <button
                 onClick={handleAddToCart}
                 disabled={adding}
-                className="flex-1 bg-amber-500 hover:bg-amber-600 disabled:bg-gray-300 text-white font-medium py-3 px-6 rounded-lg transition-colors"
+                className="w-full bg-current-accent hover:bg-current-dark disabled:bg-gray-300 text-white font-medium py-3 px-6 rounded-lg transition-colors"
               >
                 {added ? 'Added!' : adding ? 'Adding...' : 'Add to Cart'}
               </button>

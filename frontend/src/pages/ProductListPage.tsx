@@ -63,7 +63,7 @@ export default function ProductListPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Products</h1>
+      <h1 className="text-3xl font-bold text-ocean-deeper mb-8 font-[family-name:'Playfair_Display']">Products</h1>
 
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Sidebar */}
@@ -76,11 +76,11 @@ export default function ProductListPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search products..."
-                className="flex-1 border border-gray-300 rounded-l-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
+                className="flex-1 border border-ocean/20 rounded-l-lg px-3 py-2 text-sm focus:ring-2 focus:ring-current-accent focus:border-current-accent outline-none"
               />
               <button
                 type="submit"
-                className="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-r-lg text-sm font-medium transition-colors"
+                className="bg-current-accent hover:bg-current-dark text-white px-4 py-2 rounded-r-lg text-sm font-medium transition-colors"
               >
                 Search
               </button>
@@ -89,15 +89,15 @@ export default function ProductListPage() {
 
           {/* Categories */}
           <div>
-            <h3 className="font-semibold text-gray-900 mb-3">Categories</h3>
+            <h3 className="font-semibold text-ocean-deeper mb-3">Categories</h3>
             <ul className="space-y-1">
               <li>
                 <button
                   onClick={() => updateParams({ category: '', page: '1' })}
                   className={`block w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
                     !currentCategory
-                      ? 'bg-amber-100 text-amber-800 font-medium'
-                      : 'text-gray-600 hover:bg-gray-100'
+                      ? 'bg-current-mist text-current-accent border-l-2 border-current-accent font-medium'
+                      : 'text-gray-600 hover:text-ocean hover:bg-ocean-mist'
                   }`}
                 >
                   All Products
@@ -109,8 +109,8 @@ export default function ProductListPage() {
                     onClick={() => updateParams({ category: cat.slug, page: '1' })}
                     className={`block w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
                       currentCategory === cat.slug
-                        ? 'bg-amber-100 text-amber-800 font-medium'
-                        : 'text-gray-600 hover:bg-gray-100'
+                        ? 'bg-current-mist text-current-accent border-l-2 border-current-accent font-medium'
+                        : 'text-gray-600 hover:text-ocean hover:bg-ocean-mist'
                     }`}
                   >
                     {cat.name}
@@ -128,7 +128,7 @@ export default function ProductListPage() {
         <div className="flex-1">
           {loading ? (
             <div className="flex justify-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500" />
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-current-accent" />
             </div>
           ) : products.length > 0 ? (
             <>
@@ -144,7 +144,7 @@ export default function ProductListPage() {
                   <button
                     onClick={() => updateParams({ page: String(currentPage - 1) })}
                     disabled={currentPage <= 1}
-                    className="px-3 py-2 rounded-lg border border-gray-300 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                    className="px-3 py-2 rounded-lg border border-ocean/20 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-ocean-mist transition-colors"
                   >
                     Previous
                   </button>
@@ -154,7 +154,7 @@ export default function ProductListPage() {
                   <button
                     onClick={() => updateParams({ page: String(currentPage + 1) })}
                     disabled={currentPage >= totalPages}
-                    className="px-3 py-2 rounded-lg border border-gray-300 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                    className="px-3 py-2 rounded-lg border border-ocean/20 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-ocean-mist transition-colors"
                   >
                     Next
                   </button>

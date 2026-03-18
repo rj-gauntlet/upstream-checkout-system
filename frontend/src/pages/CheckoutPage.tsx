@@ -44,8 +44,8 @@ export default function CheckoutPage() {
   if (!cart || cart.items.length === 0) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-16 text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Your cart is empty</h2>
-        <a href="/products" className="text-amber-600 hover:text-amber-700 font-medium">
+        <h2 className="text-2xl font-bold text-ocean-deeper mb-4 font-[family-name:'Playfair_Display']">Your cart is empty</h2>
+        <a href="/products" className="text-current-accent hover:text-current-dark font-medium">
           Browse Products
         </a>
       </div>
@@ -129,19 +129,19 @@ export default function CheckoutPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
+      <h1 className="text-3xl font-bold text-ocean-deeper mb-8 font-[family-name:'Playfair_Display']">Checkout</h1>
 
       <div className="flex flex-col lg:flex-row gap-8">
         <div className="flex-1">
           {!clientSecret ? (
             <form onSubmit={handleSubmit} className="space-y-8">
-              <div className="bg-white rounded-lg shadow p-6">
+              <div className="bg-white rounded-xl shadow-sm border border-ocean/5 p-6">
                 <CheckoutForm data={formData} onChange={setFormData} />
               </div>
 
               {/* Payment Method */}
-              <div className="bg-white rounded-lg shadow p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Payment Method</h3>
+              <div className="bg-white rounded-xl shadow-sm border border-ocean/5 p-6">
+                <h3 className="text-lg font-semibold text-ocean-deeper mb-4">Payment Method</h3>
                 <div className="space-y-3">
                   <label className="flex items-center gap-3 cursor-pointer">
                     <input
@@ -150,7 +150,7 @@ export default function CheckoutPage() {
                       value="stripe"
                       checked={paymentMethod === 'stripe'}
                       onChange={() => setPaymentMethod('stripe')}
-                      className="accent-amber-500"
+                      className="accent-current-accent"
                     />
                     <span className="text-gray-700">Credit / Debit Card (Stripe)</span>
                   </label>
@@ -161,7 +161,7 @@ export default function CheckoutPage() {
                       value="paypal"
                       checked={paymentMethod === 'paypal'}
                       onChange={() => setPaymentMethod('paypal')}
-                      className="accent-amber-500"
+                      className="accent-current-accent"
                     />
                     <span className="text-gray-700">PayPal</span>
                   </label>
@@ -176,7 +176,7 @@ export default function CheckoutPage() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-amber-500 hover:bg-amber-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-3 rounded-lg transition-colors"
+                  className="w-full bg-current-accent hover:bg-current-dark disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-3 rounded-lg transition-colors"
                 >
                   {submitting ? 'Processing...' : 'Continue to Payment'}
                 </button>
@@ -192,8 +192,8 @@ export default function CheckoutPage() {
               )}
             </form>
           ) : (
-            <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Payment Details</h3>
+            <div className="bg-white rounded-xl shadow-sm border border-ocean/5 p-6">
+              <h3 className="text-lg font-semibold text-ocean-deeper mb-4">Payment Details</h3>
               <Elements stripe={stripePromise} options={{ clientSecret }}>
                 <StripePaymentForm
                   clientSecret={clientSecret}
@@ -208,8 +208,8 @@ export default function CheckoutPage() {
         {/* Order Summary */}
         <div className="lg:w-80">
           <CartSummary subtotal={cart.subtotal} />
-          <div className="bg-white rounded-lg shadow p-4 mt-4">
-            <h4 className="font-medium text-gray-900 text-sm mb-3">Items ({cart.total_items})</h4>
+          <div className="bg-white rounded-xl shadow-sm border border-ocean/5 p-4 mt-4">
+            <h4 className="font-medium text-ocean-deeper text-sm mb-3">Items ({cart.total_items})</h4>
             <div className="space-y-2">
               {cart.items.map((item) => (
                 <div key={item.id} className="flex justify-between text-sm">

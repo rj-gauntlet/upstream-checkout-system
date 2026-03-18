@@ -27,8 +27,8 @@ export default function LoginPage() {
 
   return (
     <div className="max-w-md mx-auto px-4 py-16">
-      <div className="bg-white rounded-lg shadow p-8">
-        <h1 className="text-2xl font-bold text-gray-900 text-center mb-6">Login</h1>
+      <div className="bg-white rounded-xl shadow-md border border-ocean/5 p-8">
+        <h1 className="text-2xl font-bold text-ocean-deeper text-center mb-6 font-[family-name:'Playfair_Display']">Sign In</h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -41,7 +41,7 @@ export default function LoginPage() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
+              className="w-full border border-ocean/20 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-current-accent focus:border-current-accent outline-none"
             />
           </div>
 
@@ -55,7 +55,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
+              className="w-full border border-ocean/20 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-current-accent focus:border-current-accent outline-none"
             />
           </div>
 
@@ -64,16 +64,16 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-amber-500 hover:bg-amber-600 disabled:bg-gray-300 text-white font-medium py-3 rounded-lg transition-colors"
+            className="w-full bg-current-accent hover:bg-current-dark disabled:bg-gray-300 text-white font-medium py-3 rounded-lg transition-colors"
           >
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
 
         <p className="text-center text-sm text-gray-500 mt-6">
           Don't have an account?{' '}
-          <Link to="/signup" className="text-amber-600 hover:text-amber-700 font-medium">
-            Sign Up
+          <Link to="/signup" className="text-current-accent hover:text-current-dark font-medium">
+            Sign up
           </Link>
         </p>
       </div>

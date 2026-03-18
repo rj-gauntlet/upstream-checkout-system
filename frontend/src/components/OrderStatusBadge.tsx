@@ -3,7 +3,7 @@ interface OrderStatusBadgeProps {
 }
 
 const statusStyles: Record<string, string> = {
-  pending: 'bg-yellow-100 text-yellow-800',
+  pending: 'bg-sunbeam-mist text-sunbeam-dark',
   paid: 'bg-blue-100 text-blue-800',
   processing: 'bg-indigo-100 text-indigo-800',
   shipped: 'bg-purple-100 text-purple-800',

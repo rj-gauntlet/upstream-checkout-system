@@ -66,9 +66,9 @@ export default function AccountPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">My Account</h1>
+      <h1 className="text-3xl font-bold text-ocean-deeper mb-8 font-[family-name:'Playfair_Display']">My Account</h1>
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 space-y-4">
+      <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-ocean/5 p-6 space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label htmlFor="first_name" className="block text-sm font-medium text-gray-700 mb-1">
@@ -80,7 +80,7 @@ export default function AccountPage() {
               name="first_name"
               value={formData.first_name}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
+              className="w-full border border-ocean/20 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-current-accent focus:border-current-accent outline-none"
             />
           </div>
           <div>
@@ -93,7 +93,7 @@ export default function AccountPage() {
               name="last_name"
               value={formData.last_name}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
+              className="w-full border border-ocean/20 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-current-accent focus:border-current-accent outline-none"
             />
           </div>
         </div>
@@ -108,7 +108,7 @@ export default function AccountPage() {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
+            className="w-full border border-ocean/20 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-current-accent focus:border-current-accent outline-none"
           />
         </div>
 
@@ -122,7 +122,7 @@ export default function AccountPage() {
             name="phone"
             value={formData.phone}
             onChange={handleChange}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
+            className="w-full border border-ocean/20 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-current-accent focus:border-current-accent outline-none"
           />
         </div>
 
@@ -136,7 +136,7 @@ export default function AccountPage() {
             name="address_line1"
             value={formData.address_line1}
             onChange={handleChange}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
+            className="w-full border border-ocean/20 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-current-accent focus:border-current-accent outline-none"
           />
         </div>
 
@@ -151,7 +151,7 @@ export default function AccountPage() {
               name="city"
               value={formData.city}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
+              className="w-full border border-ocean/20 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-current-accent focus:border-current-accent outline-none"
             />
           </div>
           <div>
@@ -164,7 +164,7 @@ export default function AccountPage() {
               name="state"
               value={formData.state}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
+              className="w-full border border-ocean/20 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-current-accent focus:border-current-accent outline-none"
             />
           </div>
           <div>
@@ -177,7 +177,7 @@ export default function AccountPage() {
               name="zip_code"
               value={formData.zip_code}
               onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
+              className="w-full border border-ocean/20 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-current-accent focus:border-current-accent outline-none"
             />
           </div>
         </div>
@@ -188,7 +188,7 @@ export default function AccountPage() {
         <button
           type="submit"
           disabled={saving}
-          className="bg-amber-500 hover:bg-amber-600 disabled:bg-gray-300 text-white font-medium px-6 py-3 rounded-lg transition-colors"
+          className="bg-current-accent hover:bg-current-dark disabled:bg-gray-300 text-white font-medium px-6 py-3 rounded-lg transition-colors"
         >
           {saving ? 'Saving...' : 'Save Changes'}
         </button>

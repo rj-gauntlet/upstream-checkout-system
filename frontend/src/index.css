@@ -1,1 +1,41 @@
 @import "tailwindcss";
+
+/* === Upstream Education Design System === */
+
+@theme {
+  /* Primary — Deep Teal */
+  --color-ocean: #286181;
+  --color-ocean-dark: #1d4a63;
+  --color-ocean-deeper: #153548;
+  --color-ocean-light: #337a9e;
+  --color-ocean-mist: #e8f2f7;
+
+  /* Accent — Turquoise */
+  --color-current-accent: #44C0C5;
+  --color-current-dark: #38a3a7;
+  --color-current-light: #6dd3d6;
+  --color-current-mist: #e0f5f6;
+
+  /* Warm Accent — Gold */
+  --color-sunbeam: #FCD739;
+  --color-sunbeam-dark: #e5c232;
+  --color-sunbeam-light: #fde26a;
+  --color-sunbeam-mist: #fef9e0;
+
+  /* Font families */
+  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-body: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Base styles */
+body {
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Focus ring override */
+*:focus-visible {
+  outline: 2px solid var(--color-current-accent);
+  outline-offset: 2px;
+}
