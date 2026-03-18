@@ -6,7 +6,7 @@ import CartSummary from '../components/CartSummary';
 function DebouncedQuantityInput({ value, max, onChange }: { value: number; max: number; onChange: (qty: number) => void }) {
   const [localValue, setLocalValue] = useState(String(value));
   const [stockWarning, setStockWarning] = useState(false);
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
     setLocalValue(String(value));
