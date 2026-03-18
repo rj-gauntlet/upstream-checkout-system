@@ -1,0 +1,20 @@
+from django.contrib import admin
+from unfold.admin import ModelAdmin
+
+from .models import AnalyticsEvent
+
+
+@admin.register(AnalyticsEvent)
+class AnalyticsEventAdmin(ModelAdmin):
+    list_display = ["event_type", "user", "session_id", "product", "order", "created_at"]
+    list_filter = ["event_type", "created_at"]
+    search_fields = ["event_type", "session_id"]
+    readonly_fields = [
+        "event_type",
+        "user",
+        "session_id",
+        "product",
+        "order",
+        "metadata",
+        "created_at",
+    ]
