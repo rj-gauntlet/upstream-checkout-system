@@ -120,22 +120,43 @@ export default function ProductDetailPage() {
           {/* Quantity + Add to Cart */}
           {product.in_stock && (
             <div className="space-y-4">
-              <div className="flex items-center border border-ocean/20 rounded-lg w-fit">
-                <button
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="px-3 py-2 text-gray-600 hover:bg-ocean-mist transition-colors rounded-l-lg"
-                >
-                  -
-                </button>
-                <span className="px-4 py-2 text-sm font-medium border-x border-ocean/20">
-                  {quantity}
-                </span>
-                <button
-                  onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
-                  className="px-3 py-2 text-gray-600 hover:bg-ocean-mist transition-colors rounded-r-lg"
-                >
-                  +
-                </button>
+              <div>
+                <div className="flex items-center border border-ocean/20 rounded-lg w-fit">
+                  <button
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="px-3 py-2 text-gray-600 hover:bg-ocean-mist transition-colors rounded-l-lg"
+                  >
+                    -
+                  </button>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={quantity}
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(/[^0-9]/g, '');
+                      if (raw === '') { setQuantity(1); return; }
+                      const num = parseInt(raw);
+                      if (num > product.stock) {
+                        setQuantity(product.stock);
+                      } else if (num < 1) {
+                        setQuantity(1);
+                      } else {
+                        setQuantity(num);
+                      }
+                    }}
+                    onBlur={() => { if (quantity < 1) setQuantity(1); }}
+                    className="w-12 text-center py-2 text-sm font-medium border-x border-ocean/20 outline-none"
+                  />
+                  <button
+                    onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
+                    className="px-3 py-2 text-gray-600 hover:bg-ocean-mist transition-colors rounded-r-lg"
+                  >
+                    +
+                  </button>
+                </div>
+                {quantity >= product.stock && (
+                  <p className="text-xs text-amber-600 mt-1">Only {product.stock} available</p>
+                )}
               </div>
               <button
                 onClick={handleAddToCart}

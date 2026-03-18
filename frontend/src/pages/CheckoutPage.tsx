@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
@@ -12,8 +12,43 @@ import StripePaymentForm from '../components/StripePaymentForm';
 import PayPalButton from '../components/PayPalButton';
 import { trackEvent } from '../utils/analytics';
 
+import type { CartItem } from '../types';
+
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || '');
 const paypalClientId = import.meta.env.VITE_PAYPAL_CLIENT_ID || '';
+
+function ItemsCollapsible({ items, totalItems }: { items: CartItem[]; totalItems: number }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="bg-white rounded-xl shadow-sm border border-ocean/5 p-4 mt-4">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex items-center justify-between w-full text-left"
+      >
+        <h4 className="font-medium text-ocean-deeper text-sm">Items ({totalItems})</h4>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className={`h-4 w-4 text-gray-400 transition-transform ${open ? 'rotate-180' : ''}`}
+          fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      {open && (
+        <div className="space-y-2 mt-3 pt-3 border-t border-ocean/5">
+          {items.map((item) => (
+            <div key={item.id} className="flex justify-between text-sm">
+              <span className="text-gray-600 truncate mr-2">
+                {item.product.name} x{item.quantity}
+              </span>
+              <span className="text-gray-900 shrink-0">${item.subtotal}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function CheckoutPage() {
   const { user } = useAuth();
@@ -217,19 +252,7 @@ export default function CheckoutPage() {
         {/* Order Summary */}
         <div className="lg:w-80">
           <CartSummary subtotal={cart.subtotal} />
-          <div className="bg-white rounded-xl shadow-sm border border-ocean/5 p-4 mt-4">
-            <h4 className="font-medium text-ocean-deeper text-sm mb-3">Items ({cart.total_items})</h4>
-            <div className="space-y-2">
-              {cart.items.map((item) => (
-                <div key={item.id} className="flex justify-between text-sm">
-                  <span className="text-gray-600 truncate mr-2">
-                    {item.product.name} x{item.quantity}
-                  </span>
-                  <span className="text-gray-900 shrink-0">${item.subtotal}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+          <ItemsCollapsible items={cart.items} totalItems={cart.total_items} />
         </div>
       </div>
     </div>

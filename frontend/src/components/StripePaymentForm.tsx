@@ -44,7 +44,7 @@ export default function StripePaymentForm({ clientSecret, onSuccess, onError }: 
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="border border-gray-300 rounded-lg p-4">
+      <div className="border border-ocean/20 rounded-lg p-4">
         <CardElement
           options={{
             style: {
@@ -64,7 +64,7 @@ export default function StripePaymentForm({ clientSecret, onSuccess, onError }: 
       <button
         type="submit"
         disabled={!stripe || processing}
-        className="w-full bg-amber-500 hover:bg-amber-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-3 rounded-lg transition-colors"
+        className="w-full bg-current-accent hover:bg-current-dark disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-3 rounded-lg transition-colors"
       >
         {processing ? 'Processing...' : 'Pay Now'}
       </button>

@@ -3,552 +3,597 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Upstream Literacy E-Commerce — Project Dashboard</title>
+<title>Dashboard — Upstream Literacy E-Commerce Shopping Cart & Checkout System</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#0f1117;--card:#1a1d27;--border:#2a2d3a;
-  --text:#e8eaed;--text2:#9ca3af;--muted:#6b7280;
-  --green:#34d399;--amber:#fbbf24;--red:#f87171;--blue:#60a5fa;--purple:#a78bfa;
-  --radius:12px;--radius-sm:8px;
-}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
-a{color:var(--blue);text-decoration:none}
+body{font-family:'Inter',sans-serif;background:#0f1117;color:#e8eaed;min-height:100vh;line-height:1.6}
+a{color:#60a5fa;text-decoration:none}
 a:hover{text-decoration:underline}
 
-/* Layout */
-.container{max-width:1200px;margin:0 auto;padding:24px 20px}
-.header{text-align:center;margin-bottom:32px}
-.header h1{font-size:28px;font-weight:800;margin-bottom:4px}
-.header p{color:var(--text2);font-size:14px;max-width:700px;margin:0 auto 16px}
+@keyframes pulse-green{0%,100%{box-shadow:0 0 0 0 rgba(52,211,153,.4)}50%{box-shadow:0 0 0 6px rgba(52,211,153,0)}}
+@keyframes pulse-amber{0%,100%{box-shadow:0 0 0 0 rgba(251,191,36,.4)}50%{box-shadow:0 0 0 6px rgba(251,191,36,0)}}
+@keyframes pulse-red{0%,100%{box-shadow:0 0 0 0 rgba(248,113,113,.4)}50%{box-shadow:0 0 0 6px rgba(248,113,113,0)}}
+@keyframes pulse-gray{0%,100%{box-shadow:0 0 0 0 rgba(107,114,128,.3)}50%{box-shadow:0 0 0 6px rgba(107,114,128,0)}}
 
-/* Stats row */
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:24px}
-.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center}
-.stat-card .label{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:4px}
-.stat-card .value{font-size:28px;font-weight:800}
-.stat-card .sub{font-size:12px;color:var(--text2);margin-top:2px}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex-shrink:0}
+.dot-green{background:#34d399;animation:pulse-green 2s infinite}
+.dot-amber{background:#fbbf24;animation:pulse-amber 2s infinite}
+.dot-red{background:#f87171;animation:pulse-red 2s infinite}
+.dot-gray{background:#6b7280;animation:pulse-gray 3s infinite}
+.dot-blue{background:#60a5fa}
+.dot-purple{background:#a78bfa}
 
-/* Progress bar */
-.progress-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:24px}
-.progress-bar-outer{width:100%;height:22px;background:#23263280;border-radius:99px;overflow:hidden;position:relative}
-.progress-bar-inner{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--green),var(--blue));transition:width .6s ease}
-.progress-bar-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.header{background:#1a1d27;border-bottom:1px solid #2a2d3a;padding:24px 32px}
+.header-top{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.header-left{flex:1;min-width:280px}
+.header-left h1{font-size:22px;font-weight:700;margin-bottom:4px}
+.header-left p{font-size:13px;color:#9ca3af;max-width:600px}
+.header-right{display:flex;flex-direction:column;align-items:flex-end;gap:12px}
+.completion-big{font-size:48px;font-weight:800;color:#34d399;line-height:1}
+.completion-label{font-size:12px;color:#9ca3af;text-transform:uppercase;letter-spacing:1px}
+.status-row{display:flex;align-items:center;gap:20px;margin-top:16px;flex-wrap:wrap}
+.status-item{display:flex;align-items:center;gap:6px;font-size:13px;color:#9ca3af}
+.status-item a{font-size:13px}
+.start-btn{display:inline-flex;align-items:center;gap:6px;background:#2a2d3a;border:1px solid #3a3d4a;color:#e8eaed;padding:8px 14px;border-radius:8px;font-size:13px;font-family:'Inter',sans-serif;cursor:pointer;transition:background .2s}
+.start-btn:hover{background:#3a3d4a}
+.start-btn.running{background:#065f46;border-color:#34d399;color:#34d399;cursor:default}
+.start-btn svg{width:14px;height:14px}
 
-/* Pipeline */
-.pipeline{display:flex;gap:4px;margin-bottom:24px;flex-wrap:wrap}
-.pipeline-stage{flex:1;min-width:120px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px;text-align:center;position:relative}
-.pipeline-stage .stage-name{font-size:13px;font-weight:600;margin-bottom:4px}
-.pipeline-stage .stage-status{font-size:11px;font-weight:600;display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:99px}
-.pipeline-stage.complete .stage-status{background:rgba(52,211,153,.15);color:var(--green)}
-.pipeline-stage.in-progress .stage-status{background:rgba(251,191,36,.15);color:var(--amber)}
-.pipeline-stage.not-started .stage-status{background:rgba(107,114,128,.15);color:var(--muted)}
-.pipeline-stage.in-progress .stage-status::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--amber);animation:pulse 1.5s ease-in-out infinite}
-.pipeline-stage.complete .stage-status::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--green)}
-.pipeline-stage.not-started .stage-status::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--muted)}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.4)}}
+.pipeline-bar{background:#1a1d27;border-bottom:1px solid #2a2d3a;padding:20px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.pipeline{display:flex;align-items:center;gap:0;flex-wrap:wrap}
+.pipeline-stage{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500}
+.pipeline-stage.complete{background:rgba(52,211,153,.1);color:#34d399}
+.pipeline-stage.current{background:rgba(251,191,36,.1);color:#fbbf24}
+.pipeline-stage.future{background:rgba(107,114,128,.08);color:#6b7280}
+.pipeline-stage .check{font-size:14px}
+.pipeline-arrow{color:#3a3d4a;font-size:18px;margin:0 2px}
+.stats-row{display:flex;gap:24px;flex-wrap:wrap}
+.stat{text-align:center}
+.stat-value{font-size:20px;font-weight:700;color:#e8eaed}
+.stat-label{font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:.5px}
 
-/* URLs */
-.urls{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
-.url-card{flex:1;min-width:240px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.url-card .url-label{font-size:12px;color:var(--muted);font-weight:500}
-.url-card .url-link{font-size:14px;font-weight:600;color:var(--blue)}
-.url-card .status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.url-card .status-dot.online{background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 1.5s ease-in-out infinite}
-.url-card .status-dot.offline{background:var(--red)}
-.url-card .status-dot.checking{background:var(--amber);animation:pulse 1s ease-in-out infinite}
+.tabs{display:flex;border-bottom:1px solid #2a2d3a;padding:0 32px;background:#1a1d27}
+.tab{padding:12px 20px;font-size:14px;font-weight:500;color:#6b7280;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;position:relative;user-select:none}
+.tab:hover{color:#9ca3af}
+.tab.active{color:#60a5fa;border-bottom-color:#60a5fa}
+.tab .badge{position:absolute;top:6px;right:4px;background:#60a5fa;color:#fff;font-size:10px;font-weight:700;padding:1px 5px;border-radius:8px;min-width:16px;text-align:center}
 
-/* Commands */
-.commands{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:24px}
-.commands h3{font-size:14px;font-weight:600;margin-bottom:10px;color:var(--text2)}
-.cmd-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.cmd-row:last-child{margin-bottom:0}
-.cmd-label{font-size:12px;color:var(--muted);min-width:70px;font-weight:500}
-.cmd-code{flex:1;background:#0f1117;border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-family:'Courier New',monospace;font-size:13px;color:var(--green);overflow-x:auto;white-space:nowrap}
-.cmd-copy{background:transparent;border:1px solid var(--border);border-radius:6px;padding:6px 10px;cursor:pointer;color:var(--text2);font-size:12px;font-family:'Inter',sans-serif;transition:all .2s}
-.cmd-copy:hover{background:var(--border);color:var(--text)}
-.cmd-copy.copied{color:var(--green);border-color:var(--green)}
-
-/* Tabs */
-.tabs{display:flex;gap:4px;margin-bottom:0;background:var(--card);border:1px solid var(--border);border-bottom:none;border-radius:var(--radius) var(--radius) 0 0;padding:8px 8px 0}
-.tab-btn{padding:10px 20px;border:none;background:transparent;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;border-radius:var(--radius-sm) var(--radius-sm) 0 0;font-family:'Inter',sans-serif;transition:all .2s}
-.tab-btn:hover{color:var(--text2);background:rgba(255,255,255,.03)}
-.tab-btn.active{background:var(--bg);color:var(--text)}
-.tab-content{background:var(--card);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius) var(--radius);padding:20px;min-height:300px;display:none}
+.tab-content{padding:24px 32px;display:none}
 .tab-content.active{display:block}
 
-/* Phase cards */
-.phase{margin-bottom:16px;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
-.phase:last-child{margin-bottom:0}
-.phase-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer;user-select:none}
-.phase-header:hover{background:rgba(255,255,255,.02)}
-.phase-header h4{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}
-.phase-header .phase-meta{font-size:12px;color:var(--text2)}
-.phase-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;text-transform:uppercase;letter-spacing:.5px}
-.phase-badge.complete{background:rgba(52,211,153,.15);color:var(--green)}
-.phase-badge.in-progress{background:rgba(251,191,36,.15);color:var(--amber)}
-.phase-body{padding:0 16px 14px;display:none}
-.phase.open .phase-body{display:block}
-.phase-toggle{font-size:18px;color:var(--muted);transition:transform .2s}
-.phase.open .phase-toggle{transform:rotate(90deg)}
-.task{display:flex;align-items:flex-start;gap:8px;padding:4px 0;font-size:13px;color:var(--text2)}
-.task .check{font-size:14px;flex-shrink:0;margin-top:1px}
-.task .check.done{color:var(--green)}
-.task .check.pending{color:var(--muted)}
-.phase-progress{width:100%;height:4px;background:#23263280;border-radius:99px;overflow:hidden;margin-top:4px}
-.phase-progress-inner{height:100%;border-radius:99px;background:var(--green);transition:width .4s}
+.card{background:#1a1d27;border:1px solid #2a2d3a;border-radius:12px;padding:20px;margin-bottom:16px}
+.card h3{font-size:16px;font-weight:600;margin-bottom:12px}
 
-/* Requirements table */
-.req-table{width:100%;border-collapse:collapse}
-.req-table th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);padding:8px 12px;border-bottom:1px solid var(--border)}
-.req-table td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px}
-.req-table tr:last-child td{border-bottom:none}
-.req-table .req-id{font-family:monospace;color:var(--purple);font-weight:600;font-size:12px}
-.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:99px;font-size:11px;font-weight:600}
-.badge.done{background:rgba(52,211,153,.15);color:var(--green)}
-.badge.not-done{background:rgba(248,113,113,.15);color:var(--red)}
+.phase-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;cursor:pointer}
+.phase-header h3{margin-bottom:0;display:flex;align-items:center;gap:8px}
+.phase-progress{width:100%;height:6px;background:#2a2d3a;border-radius:3px;overflow:hidden;margin-bottom:8px}
+.phase-progress-fill{height:100%;background:#34d399;border-radius:3px;transition:width .3s}
+.phase-meta{display:flex;gap:16px;font-size:12px;color:#6b7280;margin-bottom:12px}
+.task-list{list-style:none;padding:0;margin:0}
+.task-list li{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px;border-top:1px solid #1f2230}
+.task-list li:first-child{border-top:none}
+.chip{font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.chip-done{background:rgba(52,211,153,.15);color:#34d399}
+.chip-pending{background:rgba(107,114,128,.15);color:#6b7280}
+.chip-progress{background:rgba(251,191,36,.15);color:#fbbf24}
+.chip-blocked{background:rgba(248,113,113,.15);color:#f87171}
+.chip-deviation{background:rgba(167,139,250,.15);color:#a78bfa}
+.expand-icon{transition:transform .2s;font-size:12px;color:#6b7280}
+.expand-icon.open{transform:rotate(90deg)}
+.task-list-wrap{overflow:hidden;transition:max-height .3s ease;max-height:0}
+.task-list-wrap.open{max-height:2000px}
 
-/* Artifacts */
-.artifact-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
-.artifact{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;display:flex;align-items:center;justify-content:space-between}
-.artifact .art-name{font-size:13px;font-weight:600}
-.artifact .art-date{font-size:11px;color:var(--muted);margin-top:2px}
-.artifact .art-status{font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px}
-.artifact .art-status.exists{background:rgba(52,211,153,.15);color:var(--green)}
-.artifact .art-status.missing{background:rgba(107,114,128,.15);color:var(--muted)}
+.req-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:768px){.req-grid{grid-template-columns:1fr}}
+.req-group{background:#1a1d27;border:1px solid #2a2d3a;border-radius:12px;padding:16px}
+.req-group h4{font-size:14px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.req-group .req-bar{width:100%;height:4px;background:#2a2d3a;border-radius:2px;overflow:hidden;margin-bottom:10px}
+.req-group .req-bar-fill{height:100%;border-radius:2px}
+.req-item{display:flex;align-items:flex-start;gap:8px;padding:4px 0;font-size:12px;color:#9ca3af}
+.req-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px}
 
-/* Activity */
-.activity-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.artifact-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.artifact-card{background:#1a1d27;border:1px solid #2a2d3a;border-radius:12px;padding:16px;display:flex;align-items:center;gap:12px}
+.artifact-card .artifact-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.artifact-card .artifact-icon.exists{background:rgba(52,211,153,.12)}
+.artifact-card .artifact-icon.missing{background:rgba(107,114,128,.12)}
+.artifact-info h4{font-size:14px;font-weight:500;margin-bottom:2px}
+.artifact-info p{font-size:12px;color:#6b7280}
+
+.activity-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid #1f2230}
 .activity-item:last-child{border-bottom:none}
-.activity-date{font-size:12px;color:var(--muted);min-width:90px;font-weight:500;flex-shrink:0}
-.activity-msg{font-size:13px;color:var(--text2)}
+.activity-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.activity-content{flex:1}
+.activity-content strong{font-size:14px}
+.activity-content p{font-size:12px;color:#6b7280;margin-top:2px}
+.activity-time{font-size:11px;color:#6b7280;white-space:nowrap}
 
-/* Bonus section */
-.bonus{margin-top:16px;border:1px solid rgba(167,139,250,.3);border-radius:var(--radius-sm);padding:14px 16px;background:rgba(167,139,250,.05)}
-.bonus h4{font-size:13px;font-weight:600;color:var(--purple);margin-bottom:8px}
-
-/* GitHub link */
-.gh-link{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 14px;font-size:13px;font-weight:500;color:var(--text);margin-top:8px;transition:all .2s}
-.gh-link:hover{border-color:var(--blue);text-decoration:none;color:var(--blue)}
-
-/* Responsive */
-@media(max-width:640px){
-  .stats{grid-template-columns:1fr 1fr}
-  .pipeline{flex-direction:column}
-  .urls{flex-direction:column}
-  .tabs{overflow-x:auto}
-  .tab-btn{padding:8px 14px;font-size:12px;white-space:nowrap}
-  .cmd-row{flex-wrap:wrap}
-  .cmd-label{min-width:100%}
-}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#0f1117}
+::-webkit-scrollbar-thumb{background:#2a2d3a;border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:#3a3d4a}
 </style>
 </head>
 <body>
-<div class="container">
 
-  <!-- Header -->
-  <div class="header">
-    <h1>Upstream Literacy E-Commerce</h1>
-    <p>Shopping Cart &amp; Checkout System — Full-featured e-commerce storefront with product catalog, shopping cart, secure checkout, payment processing, order management, inventory tracking, customer accounts, and analytics.</p>
-    <a class="gh-link" href="https://github.com/rj-gauntlet/upstream-checkout-system" target="_blank">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-      rj-gauntlet/upstream-checkout-system
-    </a>
-  </div>
-
-  <!-- Stats -->
-  <div class="stats">
-    <div class="stat-card">
-      <div class="label">Tasks Done</div>
-      <div class="value" style="color:var(--green)">45<span style="font-size:16px;color:var(--muted)"> / 50</span></div>
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div class="header-left">
+      <h1>Upstream Literacy E-Commerce Shopping Cart &amp; Checkout System</h1>
+      <p>Full-featured e-commerce storefront with product catalog, shopping cart, secure checkout (Stripe + PayPal), order management, inventory tracking, customer accounts, and analytics for Upstream Literacy.</p>
     </div>
-    <div class="stat-card">
-      <div class="label">Completion</div>
-      <div class="value" style="color:var(--blue)">90%</div>
-    </div>
-    <div class="stat-card">
-      <div class="label">Current Phase</div>
-      <div class="value" style="font-size:16px;color:var(--amber)">Phase 5</div>
-      <div class="sub">Orders + Analytics + Polish</div>
-    </div>
-    <div class="stat-card">
-      <div class="label">Remaining</div>
-      <div class="value" style="color:var(--red)">5</div>
-      <div class="sub">tasks left</div>
-    </div>
-    <div class="stat-card">
-      <div class="label">Requirements</div>
-      <div class="value" style="font-size:16px;color:var(--green)">16<span style="font-size:14px;color:var(--muted)"> / 18</span></div>
+    <div class="header-right">
+      <div style="text-align:right">
+        <div class="completion-big">100%</div>
+        <div class="completion-label">Complete</div>
+      </div>
     </div>
   </div>
-
-  <!-- Overall Progress -->
-  <div class="progress-wrap">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <span style="font-size:13px;font-weight:600">Overall Progress</span>
-      <span style="font-size:13px;font-weight:700;color:var(--green)">90%</span>
+  <div class="status-row">
+    <div class="status-item">
+      <span class="dot dot-gray" id="local-dot"></span>
+      <span>Local:</span>
+      <a href="http://localhost:3001" target="_blank" id="local-url">http://localhost:3001</a>
+      <span style="color:#6b7280;margin-left:4px" id="local-label">(checking...)</span>
     </div>
-    <div class="progress-bar-outer">
-      <div class="progress-bar-inner" style="width:90%"></div>
-      <div class="progress-bar-text">45 / 50 tasks</div>
+    <div class="status-item">
+      <span class="dot dot-gray" id="backend-dot"></span>
+      <span>Backend:</span>
+      <a href="http://localhost:8000" target="_blank" id="backend-url">http://localhost:8000</a>
+      <span style="color:#6b7280;margin-left:4px" id="backend-label">(checking...)</span>
     </div>
+    <div class="status-item">
+      <span class="dot dot-gray" id="prod-dot"></span>
+      <span>Production:</span>
+      <span style="color:#6b7280" id="prod-label">Not deployed</span>
+    </div>
+    <button class="start-btn" id="start-btn" onclick="copyStartCommand()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+      <span id="start-btn-text">Copy Start Commands</span>
+    </button>
   </div>
+</div>
 
-  <!-- Pipeline -->
+<!-- PIPELINE + STATS BAR -->
+<div class="pipeline-bar">
   <div class="pipeline">
-    <div class="pipeline-stage complete">
-      <div class="stage-name">Presearch</div>
-      <div class="stage-status">Complete</div>
+    <div class="pipeline-stage complete"><span class="check">&#10003;</span> Presearch</div>
+    <span class="pipeline-arrow">&#8594;</span>
+    <div class="pipeline-stage complete"><span class="check">&#10003;</span> Implement</div>
+    <span class="pipeline-arrow">&#8594;</span>
+    <div class="pipeline-stage complete"><span class="check">&#10003;</span> Review</div>
+    <span class="pipeline-arrow">&#8594;</span>
+    <div class="pipeline-stage complete"><span class="check">&#10003;</span> Test/QA</div>
+    <span class="pipeline-arrow">&#8594;</span>
+    <div class="pipeline-stage current"><span class="dot dot-amber" style="width:8px;height:8px"></span> Ship</div>
+  </div>
+  <div class="stats-row">
+    <div class="stat"><div class="stat-value">48/48</div><div class="stat-label">Tasks Done</div></div>
+    <div class="stat"><div class="stat-value">0</div><div class="stat-label">Remaining</div></div>
+    <div class="stat"><div class="stat-value">~43h</div><div class="stat-label">Est. Duration</div></div>
+    <div class="stat"><div class="stat-value">5</div><div class="stat-label">Phases</div></div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" data-tab="phases">Phases</div>
+  <div class="tab" data-tab="requirements">Requirements</div>
+  <div class="tab" data-tab="artifacts">Artifacts</div>
+  <div class="tab" data-tab="activity">Activity <span class="badge">7</span></div>
+</div>
+
+<!-- TAB: PHASES -->
+<div class="tab-content active" id="tab-phases">
+
+  <!-- Phase 1 -->
+  <div class="card">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <h3><span class="expand-icon">&#9654;</span> Phase 1: Foundation</h3>
+      <span style="font-size:13px;color:#34d399;font-weight:600">8/8 tasks</span>
     </div>
-    <div class="pipeline-stage in-progress">
-      <div class="stage-name">Implement</div>
-      <div class="stage-status">In Progress</div>
+    <div class="phase-progress"><div class="phase-progress-fill" style="width:100%"></div></div>
+    <div class="phase-meta">
+      <span>Estimated: ~6 hrs</span>
+      <span>|</span>
+      <span>Status: Complete</span>
     </div>
-    <div class="pipeline-stage not-started">
-      <div class="stage-name">Review</div>
-      <div class="stage-status">Not Started</div>
-    </div>
-    <div class="pipeline-stage not-started">
-      <div class="stage-name">Test / QA</div>
-      <div class="stage-status">Not Started</div>
-    </div>
-    <div class="pipeline-stage not-started">
-      <div class="stage-name">Ship</div>
-      <div class="stage-status">Not Started</div>
+    <div class="task-list-wrap">
+      <ul class="task-list">
+        <li><span class="chip chip-done">Done</span> Docker Compose file with PostgreSQL 16, Django backend, React frontend</li>
+        <li><span class="chip chip-done">Done</span> Django project with 6 apps scaffolded (accounts, catalog, cart, orders, payments, analytics)</li>
+        <li><span class="chip chip-done">Done</span> Django settings configured (database, CORS, JWT, media, Unfold admin)</li>
+        <li><span class="chip chip-done">Done</span> React + Vite + TypeScript + Tailwind initialized and building</li>
+        <li><span class="chip chip-done">Done</span> Axios API client with JWT interceptor</li>
+        <li><span class="chip chip-done">Done</span> React Router with all route stubs</li>
+        <li><span class="chip chip-done">Done</span> Layout component with Navbar and Footer</li>
+        <li><span class="chip chip-done">Done</span> Git repository initialized</li>
+      </ul>
     </div>
   </div>
 
-  <!-- URLs -->
-  <div class="urls">
-    <div class="url-card">
-      <div>
-        <div class="url-label">Frontend</div>
-        <a class="url-link" href="http://localhost:3001" target="_blank">http://localhost:3001</a>
-      </div>
-      <div class="status-dot checking" id="dot-fe" title="Checking..."></div>
+  <!-- Phase 2 -->
+  <div class="card">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <h3><span class="expand-icon">&#9654;</span> Phase 2: Catalog + Accounts</h3>
+      <span style="font-size:13px;color:#34d399;font-weight:600">11/11 tasks</span>
     </div>
-    <div class="url-card">
-      <div>
-        <div class="url-label">Backend</div>
-        <a class="url-link" href="http://localhost:8000" target="_blank">http://localhost:8000</a>
-      </div>
-      <div class="status-dot checking" id="dot-be" title="Checking..."></div>
+    <div class="phase-progress"><div class="phase-progress-fill" style="width:100%"></div></div>
+    <div class="phase-meta">
+      <span>Estimated: ~7 hrs</span>
+      <span>|</span>
+      <span>Status: Complete</span>
     </div>
-    <div class="url-card">
-      <div>
-        <div class="url-label">Production</div>
-        <span class="url-link" style="color:var(--muted)">Not deployed</span>
-      </div>
-      <div class="status-dot offline" title="Not deployed"></div>
-    </div>
-  </div>
-
-  <!-- Commands -->
-  <div class="commands">
-    <h3>Start Commands</h3>
-    <div class="cmd-row">
-      <span class="cmd-label">Backend</span>
-      <div class="cmd-code" id="cmd-be">cd backend && python manage.py runserver 8000</div>
-      <button class="cmd-copy" onclick="copyCmd('cmd-be',this)">Copy</button>
-    </div>
-    <div class="cmd-row">
-      <span class="cmd-label">Frontend</span>
-      <div class="cmd-code" id="cmd-fe">cd frontend && npm run dev</div>
-      <button class="cmd-copy" onclick="copyCmd('cmd-fe',this)">Copy</button>
+    <div class="task-list-wrap">
+      <ul class="task-list">
+        <li><span class="chip chip-done">Done</span> Category, Product, ProductImage models with migrations</li>
+        <li><span class="chip chip-done">Done</span> Catalog REST API (list, detail, featured, filter, search, pagination)</li>
+        <li><span class="chip chip-done">Done</span> Django admin for catalog with Unfold theme (inline images, prepopulated slugs)</li>
+        <li><span class="chip chip-done">Done</span> Seed data command with 15 literacy products across 4 categories</li>
+        <li><span class="chip chip-done">Done</span> Auth API endpoints (register, login, JWT refresh, profile)</li>
+        <li><span class="chip chip-done">Done</span> UserProfile model with post_save signal</li>
+        <li><span class="chip chip-done">Done</span> Frontend AuthContext (login, register, logout, token management)</li>
+        <li><span class="chip chip-done">Done</span> Frontend Login and Signup pages</li>
+        <li><span class="chip chip-done">Done</span> Frontend HomePage with featured products</li>
+        <li><span class="chip chip-done">Done</span> Frontend ProductListPage with category filter sidebar and search</li>
+        <li><span class="chip chip-done">Done</span> Frontend ProductDetailPage with image gallery and add-to-cart button</li>
+      </ul>
     </div>
   </div>
 
-  <!-- Tabs -->
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('phases',this)">Phases</button>
-    <button class="tab-btn" onclick="switchTab('requirements',this)">Requirements</button>
-    <button class="tab-btn" onclick="switchTab('artifacts',this)">Artifacts</button>
-    <button class="tab-btn" onclick="switchTab('activity',this)">Activity</button>
-  </div>
-
-  <!-- TAB: Phases -->
-  <div class="tab-content active" id="tab-phases">
-
-    <!-- Phase 1 -->
-    <div class="phase open">
-      <div class="phase-header" onclick="togglePhase(this)">
-        <h4><span class="phase-toggle">&#9654;</span> Phase 1: Foundation <span class="phase-badge complete">Complete</span></h4>
-        <span class="phase-meta">1 day, ~6 hrs &mdash; 8/8 tasks</span>
-      </div>
-      <div class="phase-body">
-        <div class="phase-progress"><div class="phase-progress-inner" style="width:100%"></div></div>
-        <div style="margin-top:10px">
-          <div class="task"><span class="check done">&#10003;</span> Docker Compose file with PostgreSQL 16, Django backend, React frontend</div>
-          <div class="task"><span class="check done">&#10003;</span> Django project with 6 apps scaffolded</div>
-          <div class="task"><span class="check done">&#10003;</span> Django settings configured (database, CORS, JWT, media, Unfold admin)</div>
-          <div class="task"><span class="check done">&#10003;</span> React + Vite + TypeScript + Tailwind initialized and building</div>
-          <div class="task"><span class="check done">&#10003;</span> Axios API client with JWT interceptor</div>
-          <div class="task"><span class="check done">&#10003;</span> React Router with all route stubs</div>
-          <div class="task"><span class="check done">&#10003;</span> Layout component with Navbar and Footer</div>
-          <div class="task"><span class="check done">&#10003;</span> Git repository initialized</div>
-        </div>
-      </div>
+  <!-- Phase 3 -->
+  <div class="card">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <h3><span class="expand-icon">&#9654;</span> Phase 3: Cart</h3>
+      <span style="font-size:13px;color:#34d399;font-weight:600">8/8 tasks</span>
     </div>
-
-    <!-- Phase 2 -->
-    <div class="phase">
-      <div class="phase-header" onclick="togglePhase(this)">
-        <h4><span class="phase-toggle">&#9654;</span> Phase 2: Catalog + Accounts <span class="phase-badge complete">Complete</span></h4>
-        <span class="phase-meta">1 day, ~7 hrs &mdash; 11/11 tasks</span>
-      </div>
-      <div class="phase-body">
-        <div class="phase-progress"><div class="phase-progress-inner" style="width:100%"></div></div>
-        <div style="margin-top:10px">
-          <div class="task"><span class="check done">&#10003;</span> Category, Product, ProductImage models with migrations</div>
-          <div class="task"><span class="check done">&#10003;</span> Catalog REST API (list, detail, featured, filter, search, pagination)</div>
-          <div class="task"><span class="check done">&#10003;</span> Django admin for catalog with Unfold theme</div>
-          <div class="task"><span class="check done">&#10003;</span> Seed data command with 15 literacy products across 4 categories</div>
-          <div class="task"><span class="check done">&#10003;</span> Auth API endpoints (register, login, JWT refresh, profile)</div>
-          <div class="task"><span class="check done">&#10003;</span> UserProfile model with post_save signal</div>
-          <div class="task"><span class="check done">&#10003;</span> Frontend AuthContext (login, register, logout, token management)</div>
-          <div class="task"><span class="check done">&#10003;</span> Frontend Login and Signup pages</div>
-          <div class="task"><span class="check done">&#10003;</span> Frontend HomePage with featured products</div>
-          <div class="task"><span class="check done">&#10003;</span> Frontend ProductListPage with category filter sidebar and search</div>
-          <div class="task"><span class="check done">&#10003;</span> Frontend ProductDetailPage</div>
-        </div>
-      </div>
+    <div class="phase-progress"><div class="phase-progress-fill" style="width:100%"></div></div>
+    <div class="phase-meta">
+      <span>Estimated: ~6 hrs</span>
+      <span>|</span>
+      <span>Status: Complete</span>
     </div>
-
-    <!-- Phase 3 -->
-    <div class="phase">
-      <div class="phase-header" onclick="togglePhase(this)">
-        <h4><span class="phase-toggle">&#9654;</span> Phase 3: Cart <span class="phase-badge complete">Complete</span></h4>
-        <span class="phase-meta">1 day, ~6 hrs &mdash; 8/8 tasks</span>
-      </div>
-      <div class="phase-body">
-        <div class="phase-progress"><div class="phase-progress-inner" style="width:100%"></div></div>
-        <div style="margin-top:10px">
-          <div class="task"><span class="check done">&#10003;</span> Cart and CartItem models with migrations</div>
-          <div class="task"><span class="check done">&#10003;</span> Cart REST API with dual authentication (JWT + session cookie)</div>
-          <div class="task"><span class="check done">&#10003;</span> Cart merge endpoint (guest to authenticated)</div>
-          <div class="task"><span class="check done">&#10003;</span> Session cookie middleware for guest cart identification</div>
-          <div class="task"><span class="check done">&#10003;</span> Frontend CartContext with addItem, updateQuantity, removeItem, clearCart</div>
-          <div class="task"><span class="check done">&#10003;</span> Frontend CartPage with item list, quantity controls, summary, checkout button</div>
-          <div class="task"><span class="check done">&#10003;</span> Cart badge in Navbar showing item count</div>
-          <div class="task"><span class="check done">&#10003;</span> Cart merge trigger on login in AuthContext</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Phase 4 -->
-    <div class="phase">
-      <div class="phase-header" onclick="togglePhase(this)">
-        <h4><span class="phase-toggle">&#9654;</span> Phase 4: Checkout + Payments <span class="phase-badge complete">Complete</span></h4>
-        <span class="phase-meta">2 days, ~12 hrs &mdash; 11/11 tasks</span>
-      </div>
-      <div class="phase-body">
-        <div class="phase-progress"><div class="phase-progress-inner" style="width:100%"></div></div>
-        <div style="margin-top:10px">
-          <div class="task"><span class="check done">&#10003;</span> Order and OrderItem models with migrations</div>
-          <div class="task"><span class="check done">&#10003;</span> Checkout endpoint: validate cart, check stock, create order, decrement stock atomically</div>
-          <div class="task"><span class="check done">&#10003;</span> Order number generation (human-readable: UL-YYYYMMDD-NNNN)</div>
-          <div class="task"><span class="check done">&#10003;</span> Stripe PaymentIntent creation and webhook handler</div>
-          <div class="task"><span class="check done">&#10003;</span> PayPal order creation and capture endpoints</div>
-          <div class="task"><span class="check done">&#10003;</span> Stock restoration on payment failure</div>
-          <div class="task"><span class="check done">&#10003;</span> Console email confirmation on successful payment</div>
-          <div class="task"><span class="check done">&#10003;</span> Frontend CheckoutPage with shipping form and payment method selector</div>
-          <div class="task"><span class="check done">&#10003;</span> Frontend StripePaymentForm using Stripe Elements</div>
-          <div class="task"><span class="check done">&#10003;</span> Frontend PayPalButton using PayPal React SDK</div>
-          <div class="task"><span class="check done">&#10003;</span> Frontend OrderConfirmationPage</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Phase 5 -->
-    <div class="phase open">
-      <div class="phase-header" onclick="togglePhase(this)">
-        <h4><span class="phase-toggle">&#9654;</span> Phase 5: Orders + Analytics + Polish <span class="phase-badge in-progress">In Progress</span></h4>
-        <span class="phase-meta">2 days, ~12 hrs &mdash; 7/10 tasks</span>
-      </div>
-      <div class="phase-body">
-        <div class="phase-progress"><div class="phase-progress-inner" style="width:70%"></div></div>
-        <div style="margin-top:10px">
-          <div class="task"><span class="check done">&#10003;</span> Order list and detail API endpoints</div>
-          <div class="task"><span class="check done">&#10003;</span> Guest order lookup endpoint (order number + email)</div>
-          <div class="task"><span class="check pending">&#9675;</span> AnalyticsEvent model and tracking</div>
-          <div class="task"><span class="check pending">&#9675;</span> Analytics admin dashboard with charts</div>
-          <div class="task"><span class="check done">&#10003;</span> Frontend OrderHistoryPage</div>
-          <div class="task"><span class="check done">&#10003;</span> Frontend AccountPage with profile editing</div>
-          <div class="task"><span class="check done">&#10003;</span> Out-of-stock UI handling (disabled buttons, badges)</div>
-          <div class="task"><span class="check done">&#10003;</span> Responsive design pass (mobile, tablet, desktop)</div>
-          <div class="task"><span class="check done">&#10003;</span> Loading states and error handling across all pages</div>
-          <div class="task"><span class="check pending">&#9675;</span> README with setup instructions, screenshots, architecture overview</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Bonus -->
-    <div class="bonus">
-      <h4>Bonus (not in original plan)</h4>
-      <div class="task"><span class="check done" style="color:var(--purple)">&#10003;</span> Upstream Education branding (logo, colors, fonts from upstreameducation.org)</div>
-      <div class="task"><span class="check done" style="color:var(--purple)">&#10003;</span> Stunner UI transformation (Playfair Display + Poppins fonts, teal/turquoise/gold palette)</div>
+    <div class="task-list-wrap">
+      <ul class="task-list">
+        <li><span class="chip chip-done">Done</span> Cart and CartItem models with migrations</li>
+        <li><span class="chip chip-done">Done</span> Cart REST API with dual authentication (JWT + session cookie)</li>
+        <li><span class="chip chip-done">Done</span> Cart merge endpoint (guest to authenticated)</li>
+        <li><span class="chip chip-done">Done</span> Session cookie middleware for guest cart identification</li>
+        <li><span class="chip chip-done">Done</span> Frontend CartContext with addItem, updateQuantity, removeItem, clearCart</li>
+        <li><span class="chip chip-done">Done</span> Frontend CartPage with item list, quantity controls, summary, checkout button</li>
+        <li><span class="chip chip-done">Done</span> Cart badge in Navbar showing item count</li>
+        <li><span class="chip chip-done">Done</span> Cart merge trigger on login in AuthContext</li>
+      </ul>
     </div>
   </div>
 
-  <!-- TAB: Requirements -->
-  <div class="tab-content" id="tab-requirements">
-    <table class="req-table">
-      <thead><tr><th>ID</th><th>Requirement</th><th>Status</th></tr></thead>
-      <tbody>
-        <tr><td class="req-id">FR-01</td><td>Catalog</td><td><span class="badge done">Done</span></td></tr>
-        <tr><td class="req-id">FR-02</td><td>Cart add/remove/quantity</td><td><span class="badge done">Done</span></td></tr>
-        <tr><td class="req-id">FR-03</td><td>Persistent cart sessions</td><td><span class="badge done">Done</span></td></tr>
-        <tr><td class="req-id">FR-04</td><td>Guest checkout</td><td><span class="badge done">Done</span></td></tr>
-        <tr><td class="req-id">FR-05</td><td>Registered user checkout</td><td><span class="badge done">Done</span></td></tr>
-        <tr><td class="req-id">FR-06</td><td>Stripe payment</td><td><span class="badge done">Done</span></td></tr>
-        <tr><td class="req-id">FR-07</td><td>PayPal payment</td><td><span class="badge done">Done</span></td></tr>
-        <tr><td class="req-id">FR-08</td><td>Order status tracking</td><td><span class="badge done">Done</span></td></tr>
-        <tr><td class="req-id">FR-09</td><td>Email confirmations</td><td><span class="badge done">Done</span></td></tr>
-        <tr><td class="req-id">FR-10</td><td>Stock tracking</td><td><span class="badge done">Done</span></td></tr>
-        <tr><td class="req-id">FR-11</td><td>Out-of-stock handling</td><td><span class="badge done">Done</span></td></tr>
-        <tr><td class="req-id">FR-12</td><td>Customer accounts</td><td><span class="badge done">Done</span></td></tr>
-        <tr><td class="req-id">FR-13</td><td>Order history</td><td><span class="badge done">Done</span></td></tr>
-        <tr><td class="req-id">FR-14</td><td>Profile management</td><td><span class="badge done">Done</span></td></tr>
-        <tr><td class="req-id">FR-15</td><td>Analytics dashboard</td><td><span class="badge not-done">Not Done</span></td></tr>
-        <tr><td class="req-id">FR-16</td><td>Admin product management</td><td><span class="badge done">Done</span></td></tr>
-        <tr><td class="req-id">FR-17</td><td>Admin order management</td><td><span class="badge done">Done</span></td></tr>
-        <tr><td class="req-id">FR-18</td><td>Admin inventory management</td><td><span class="badge done">Done</span></td></tr>
-      </tbody>
-    </table>
-    <div style="margin-top:16px;padding:12px 16px;background:var(--bg);border-radius:var(--radius-sm);display:flex;justify-content:space-between;font-size:13px">
-      <span style="color:var(--text2)">Must-have requirements met</span>
-      <span><span style="color:var(--green);font-weight:700">16</span> <span style="color:var(--muted)">/ 18</span></span>
+  <!-- Phase 4 -->
+  <div class="card">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <h3><span class="expand-icon">&#9654;</span> Phase 4: Checkout + Payments</h3>
+      <span style="font-size:13px;color:#34d399;font-weight:600">11/11 tasks</span>
+    </div>
+    <div class="phase-progress"><div class="phase-progress-fill" style="width:100%"></div></div>
+    <div class="phase-meta">
+      <span>Estimated: ~12 hrs</span>
+      <span>|</span>
+      <span>Status: Complete</span>
+    </div>
+    <div class="task-list-wrap">
+      <ul class="task-list">
+        <li><span class="chip chip-done">Done</span> Order and OrderItem models with migrations</li>
+        <li><span class="chip chip-done">Done</span> Checkout endpoint: validate cart, check stock, create order, decrement stock atomically</li>
+        <li><span class="chip chip-done">Done</span> Order number generation (UL-YYYYMMDD-NNNN)</li>
+        <li><span class="chip chip-done">Done</span> Stripe PaymentIntent creation and webhook handler</li>
+        <li><span class="chip chip-done">Done</span><span class="chip chip-deviation" style="margin-left:4px">Deviation</span> PayPal order creation and capture endpoints (switched from paypalrestsdk v1 to direct v2 REST API)</li>
+        <li><span class="chip chip-done">Done</span> Stock restoration on payment failure</li>
+        <li><span class="chip chip-done">Done</span> Console email confirmation on successful payment</li>
+        <li><span class="chip chip-done">Done</span> Frontend CheckoutPage with shipping form and payment method selector</li>
+        <li><span class="chip chip-done">Done</span> Frontend StripePaymentForm using Stripe Elements</li>
+        <li><span class="chip chip-done">Done</span> Frontend PayPalButton using PayPal React SDK</li>
+        <li><span class="chip chip-done">Done</span> Frontend OrderConfirmationPage</li>
+      </ul>
     </div>
   </div>
 
-  <!-- TAB: Artifacts -->
-  <div class="tab-content" id="tab-artifacts">
-    <div class="artifact-grid">
-      <div class="artifact">
-        <div>
-          <div class="art-name">PROJECT_PLAN.md</div>
-          <div class="art-date">Created 2026-03-17</div>
-        </div>
-        <span class="art-status exists">Exists</span>
-      </div>
-      <div class="artifact">
-        <div>
-          <div class="art-name">IMPLEMENTATION_LOG.md</div>
-          <div class="art-date">&mdash;</div>
-        </div>
-        <span class="art-status missing">Not Created</span>
-      </div>
-      <div class="artifact">
-        <div>
-          <div class="art-name">BUILD_MANIFEST.md</div>
-          <div class="art-date">&mdash;</div>
-        </div>
-        <span class="art-status missing">Not Created</span>
-      </div>
-      <div class="artifact">
-        <div>
-          <div class="art-name">REVIEW_REPORT.md</div>
-          <div class="art-date">&mdash;</div>
-        </div>
-        <span class="art-status missing">Not Created</span>
-      </div>
-      <div class="artifact">
-        <div>
-          <div class="art-name">TEST_REPORT.md</div>
-          <div class="art-date">&mdash;</div>
-        </div>
-        <span class="art-status missing">Not Created</span>
-      </div>
-      <div class="artifact">
-        <div>
-          <div class="art-name">RELEASE.md</div>
-          <div class="art-date">&mdash;</div>
-        </div>
-        <span class="art-status missing">Not Created</span>
-      </div>
+  <!-- Phase 5 -->
+  <div class="card">
+    <div class="phase-header" onclick="togglePhase(this)">
+      <h3><span class="expand-icon">&#9654;</span> Phase 5: Orders + Analytics + Polish</h3>
+      <span style="font-size:13px;color:#34d399;font-weight:600">10/10 tasks</span>
     </div>
-  </div>
-
-  <!-- TAB: Activity -->
-  <div class="tab-content" id="tab-activity">
-    <div class="activity-item">
-      <span class="activity-date">2026-03-18</span>
-      <span class="activity-msg">style: transform UI with Upstream Education branding and design system</span>
+    <div class="phase-progress"><div class="phase-progress-fill" style="width:100%"></div></div>
+    <div class="phase-meta">
+      <span>Estimated: ~12 hrs</span>
+      <span>|</span>
+      <span>Status: Complete</span>
     </div>
-    <div class="activity-item">
-      <span class="activity-date">2026-03-18</span>
-      <span class="activity-msg">Integrate PayPal sandbox with v2 Orders API</span>
-    </div>
-    <div class="activity-item">
-      <span class="activity-date">2026-03-18</span>
-      <span class="activity-msg">Fix order confirmation for guest checkout with email-based lookup fallback</span>
-    </div>
-    <div class="activity-item">
-      <span class="activity-date">2026-03-18</span>
-      <span class="activity-msg">Add python-dotenv for loading environment variables from .env</span>
-    </div>
-    <div class="activity-item">
-      <span class="activity-date">2026-03-18</span>
-      <span class="activity-msg">feat: initial Upstream Literacy e-commerce checkout system</span>
-    </div>
-    <div class="activity-item">
-      <span class="activity-date">2026-03-17</span>
-      <span class="activity-msg">Presearch completed &mdash; PROJECT_PLAN.md generated</span>
+    <div class="task-list-wrap">
+      <ul class="task-list">
+        <li><span class="chip chip-done">Done</span> Order list and detail API endpoints</li>
+        <li><span class="chip chip-done">Done</span> Guest order lookup endpoint (order number + email)</li>
+        <li><span class="chip chip-done">Done</span> AnalyticsEvent model and tracking</li>
+        <li><span class="chip chip-done">Done</span><span class="chip chip-deviation" style="margin-left:4px">Deviation</span> Analytics dashboard (API-based instead of embedded admin charts)</li>
+        <li><span class="chip chip-done">Done</span> Frontend OrderHistoryPage</li>
+        <li><span class="chip chip-done">Done</span> Frontend AccountPage with profile editing</li>
+        <li><span class="chip chip-done">Done</span> Out-of-stock UI handling (disabled buttons, badges)</li>
+        <li><span class="chip chip-done">Done</span> Responsive design pass (mobile, tablet, desktop)</li>
+        <li><span class="chip chip-done">Done</span> Loading states and error handling across all pages</li>
+        <li><span class="chip chip-done">Done</span> README with setup instructions, architecture overview</li>
+      </ul>
     </div>
   </div>
 
 </div>
 
+<!-- TAB: REQUIREMENTS -->
+<div class="tab-content" id="tab-requirements">
+  <div class="req-grid">
+
+    <!-- Must-have -->
+    <div class="req-group">
+      <h4><span class="dot" style="background:#f87171;width:8px;height:8px"></span> Must-have (18)</h4>
+      <div class="req-bar"><div class="req-bar-fill" style="width:100%;background:#34d399"></div></div>
+      <div style="font-size:11px;color:#6b7280;margin-bottom:8px">18/18 complete</div>
+      <div class="req-item"><span class="req-dot" style="background:#34d399"></span> FR-01: Product catalog with categories, images, descriptions</div>
+      <div class="req-item"><span class="req-dot" style="background:#34d399"></span> FR-02: Shopping cart with add/remove/quantity updates</div>
+      <div class="req-item"><span class="req-dot" style="background:#34d399"></span> FR-03: Persistent cart sessions (session/DB/merge)</div>
+      <div class="req-item"><span class="req-dot" style="background:#34d399"></span> FR-04: Guest checkout flow</div>
+      <div class="req-item"><span class="req-dot" style="background:#34d399"></span> FR-05: Registered user checkout with pre-filled shipping</div>
+      <div class="req-item"><span class="req-dot" style="background:#34d399"></span> FR-06: Stripe payment (sandbox/test mode)</div>
+      <div class="req-item"><span class="req-dot" style="background:#34d399"></span> FR-07: PayPal payment (sandbox mode)</div>
+      <div class="req-item"><span class="req-dot" style="background:#34d399"></span> FR-08: Order status tracking with lifecycle</div>
+      <div class="req-item"><span class="req-dot" style="background:#34d399"></span> FR-09: Automated email confirmations (console)</div>
+      <div class="req-item"><span class="req-dot" style="background:#34d399"></span> FR-10: Stock-level tracking with atomic decrement</div>
+      <div class="req-item"><span class="req-dot" style="background:#34d399"></span> FR-11: Out-of-stock handling</div>
+      <div class="req-item"><span class="req-dot" style="background:#34d399"></span> FR-12: Customer account creation</div>
+      <div class="req-item"><span class="req-dot" style="background:#34d399"></span> FR-13: Order history view</div>
+      <div class="req-item"><span class="req-dot" style="background:#34d399"></span> FR-14: Profile management</div>
+      <div class="req-item"><span class="req-dot" style="background:#34d399"></span> FR-15: Analytics dashboard</div>
+      <div class="req-item"><span class="req-dot" style="background:#34d399"></span> FR-16: Admin product management</div>
+      <div class="req-item"><span class="req-dot" style="background:#34d399"></span> FR-17: Admin order management</div>
+      <div class="req-item"><span class="req-dot" style="background:#34d399"></span> FR-18: Admin inventory management</div>
+    </div>
+
+    <!-- Non-Functional -->
+    <div class="req-group">
+      <h4><span class="dot" style="background:#fbbf24;width:8px;height:8px"></span> Non-Functional (6)</h4>
+      <div class="req-bar"><div class="req-bar-fill" style="width:100%;background:#34d399"></div></div>
+      <div style="font-size:11px;color:#6b7280;margin-bottom:8px">6/6 complete</div>
+      <div class="req-item"><span class="req-dot" style="background:#34d399"></span> NFR-01: PCI compliance via payment gateway</div>
+      <div class="req-item"><span class="req-dot" style="background:#34d399"></span> NFR-02: Page load &lt; 3 seconds (342KB JS + 26KB CSS)</div>
+      <div class="req-item"><span class="req-dot" style="background:#34d399"></span> NFR-03: Responsive design (mobile, tablet, desktop)</div>
+      <div class="req-item"><span class="req-dot" style="background:#34d399"></span> NFR-04: JWT auth with token refresh (60min/7day)</div>
+      <div class="req-item"><span class="req-dot" style="background:#34d399"></span> NFR-05: Atomic stock decrement (F() expressions)</div>
+      <div class="req-item"><span class="req-dot" style="background:#34d399"></span> NFR-06: Order snapshots (denormalized name/price)</div>
+    </div>
+
+    <!-- Should-have -->
+    <div class="req-group">
+      <h4><span class="dot" style="background:#60a5fa;width:8px;height:8px"></span> Should-have</h4>
+      <div class="req-bar"><div class="req-bar-fill" style="width:0%;background:#60a5fa"></div></div>
+      <div style="font-size:11px;color:#6b7280;margin-bottom:8px">No requirements in this tier</div>
+    </div>
+
+    <!-- Deferred -->
+    <div class="req-group">
+      <h4><span class="dot" style="background:#6b7280;width:8px;height:8px"></span> Deferred (post-MVP)</h4>
+      <div class="req-bar"><div class="req-bar-fill" style="width:0%;background:#6b7280"></div></div>
+      <div style="font-size:11px;color:#6b7280;margin-bottom:8px">Explicitly deferred</div>
+      <div class="req-item"><span class="req-dot" style="background:#6b7280"></span> Product reviews/ratings</div>
+      <div class="req-item"><span class="req-dot" style="background:#6b7280"></span> Wishlist functionality</div>
+      <div class="req-item"><span class="req-dot" style="background:#6b7280"></span> Coupon/discount codes</div>
+      <div class="req-item"><span class="req-dot" style="background:#6b7280"></span> Shipping rate calculation</div>
+      <div class="req-item"><span class="req-dot" style="background:#6b7280"></span> Advanced search (Elasticsearch)</div>
+      <div class="req-item"><span class="req-dot" style="background:#6b7280"></span> Multi-language support</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TAB: ARTIFACTS -->
+<div class="tab-content" id="tab-artifacts">
+  <div class="artifact-grid">
+    <div class="artifact-card">
+      <div class="artifact-icon exists" style="color:#34d399">&#128196;</div>
+      <div class="artifact-info">
+        <h4>PROJECT_PLAN.md</h4>
+        <p><span class="dot dot-green" style="width:6px;height:6px;margin-right:4px"></span> Created 2026-03-17</p>
+      </div>
+    </div>
+    <div class="artifact-card">
+      <div class="artifact-icon missing" style="color:#6b7280">&#128196;</div>
+      <div class="artifact-info">
+        <h4>IMPLEMENTATION_LOG.md</h4>
+        <p><span class="dot dot-gray" style="width:6px;height:6px;margin-right:4px"></span> Not created</p>
+      </div>
+    </div>
+    <div class="artifact-card">
+      <div class="artifact-icon missing" style="color:#6b7280">&#128196;</div>
+      <div class="artifact-info">
+        <h4>BUILD_MANIFEST.md</h4>
+        <p><span class="dot dot-gray" style="width:6px;height:6px;margin-right:4px"></span> Not created</p>
+      </div>
+    </div>
+    <div class="artifact-card">
+      <div class="artifact-icon exists" style="color:#34d399">&#128196;</div>
+      <div class="artifact-info">
+        <h4>REVIEW_REPORT.md</h4>
+        <p><span class="dot dot-green" style="width:6px;height:6px;margin-right:4px"></span> Reviewed 2026-03-18</p>
+      </div>
+    </div>
+    <div class="artifact-card">
+      <div class="artifact-icon exists" style="color:#34d399">&#128196;</div>
+      <div class="artifact-info">
+        <h4>TEST_REPORT.md</h4>
+        <p><span class="dot dot-green" style="width:6px;height:6px;margin-right:4px"></span> Tested 2026-03-18</p>
+      </div>
+    </div>
+    <div class="artifact-card">
+      <div class="artifact-icon missing" style="color:#6b7280">&#128196;</div>
+      <div class="artifact-info">
+        <h4>RELEASE.md</h4>
+        <p><span class="dot dot-gray" style="width:6px;height:6px;margin-right:4px"></span> Not created</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: ACTIVITY -->
+<div class="tab-content" id="tab-activity">
+  <div class="card">
+    <div class="activity-item">
+      <div class="activity-dot" style="background:#34d399"></div>
+      <div class="activity-content">
+        <strong>Test/QA passed</strong>
+        <p>Overall verdict: Ready to ship. Smoke 3/3, Integration 20/22, E2E 6/6. No console errors.</p>
+      </div>
+      <div class="activity-time">2026-03-18</div>
+    </div>
+    <div class="activity-item">
+      <div class="activity-dot" style="background:#60a5fa"></div>
+      <div class="activity-content">
+        <strong>Review completed</strong>
+        <p>17/18 FR pass, 1 pass with note (FR-15 analytics API-based). Architecture matches plan. Verdict: Ready for testing.</p>
+      </div>
+      <div class="activity-time">2026-03-18</div>
+    </div>
+    <div class="activity-item">
+      <div class="activity-dot" style="background:#a78bfa"></div>
+      <div class="activity-content">
+        <strong>Deviation: PayPal SDK</strong>
+        <p>Switched from deprecated paypalrestsdk v1 to direct v2 REST API via requests. Justified improvement.</p>
+      </div>
+      <div class="activity-time">2026-03-18</div>
+    </div>
+    <div class="activity-item">
+      <div class="activity-dot" style="background:#a78bfa"></div>
+      <div class="activity-content">
+        <strong>Deviation: SQLite for local dev</strong>
+        <p>Using SQLite instead of PostgreSQL for local development due to psycopg2 build failure on Python 3.14/Windows. PostgreSQL used in Docker/production.</p>
+      </div>
+      <div class="activity-time">2026-03-18</div>
+    </div>
+    <div class="activity-item">
+      <div class="activity-dot" style="background:#a78bfa"></div>
+      <div class="activity-content">
+        <strong>Deviation: Frontend port 3001</strong>
+        <p>Frontend runs on port 3001 instead of 3000 to avoid conflicts with other projects.</p>
+      </div>
+      <div class="activity-time">2026-03-18</div>
+    </div>
+    <div class="activity-item">
+      <div class="activity-dot" style="background:#34d399"></div>
+      <div class="activity-content">
+        <strong>Implementation complete</strong>
+        <p>All 5 phases implemented: Foundation, Catalog + Accounts, Cart, Checkout + Payments, Orders + Analytics + Polish. 48 deliverables completed.</p>
+      </div>
+      <div class="activity-time">2026-03-18</div>
+    </div>
+    <div class="activity-item">
+      <div class="activity-dot" style="background:#60a5fa"></div>
+      <div class="activity-content">
+        <strong>Project plan created</strong>
+        <p>PROJECT_PLAN.md generated from PRD review. 5 phases, 18 functional requirements, 6 non-functional requirements. Tech stack: Django 5.2 + React 19 + PostgreSQL.</p>
+      </div>
+      <div class="activity-time">2026-03-17</div>
+    </div>
+  </div>
+</div>
+
 <script>
 // Tab switching
-function switchTab(id, btn) {
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + id).classList.add('active');
-  btn.classList.add('active');
-}
+document.querySelectorAll('.tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+    document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  });
+});
 
-// Phase toggle
+// Phase expand/collapse
 function togglePhase(header) {
-  header.closest('.phase').classList.toggle('open');
+  var card = header.closest('.card');
+  var wrap = card.querySelector('.task-list-wrap');
+  var icon = header.querySelector('.expand-icon');
+  wrap.classList.toggle('open');
+  icon.classList.toggle('open');
 }
 
-// Copy command
-function copyCmd(id, btn) {
-  const text = document.getElementById(id).textContent;
-  navigator.clipboard.writeText(text).then(() => {
+// Copy start commands
+function copyStartCommand() {
+  var commands = "# Backend\ncd backend && python manage.py runserver 8000\n\n# Frontend\ncd frontend && npm run dev";
+  navigator.clipboard.writeText(commands).then(function() {
+    var btn = document.getElementById('start-btn-text');
     btn.textContent = 'Copied!';
-    btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+    setTimeout(function() { btn.textContent = 'Copy Start Commands'; }, 2000);
+  }).catch(function() {
+    var btn = document.getElementById('start-btn-text');
+    btn.textContent = 'Copy failed';
+    setTimeout(function() { btn.textContent = 'Copy Start Commands'; }, 2000);
   });
 }
 
-// Status pinging
-function pingUrl(url, dotId) {
-  const dot = document.getElementById(dotId);
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 3000);
-  fetch(url, { mode: 'no-cors', signal: controller.signal })
-    .then(() => {
-      clearTimeout(timeout);
-      dot.className = 'status-dot online';
-      dot.title = 'Online';
+// Live status checking
+var LOCAL_URL = 'http://localhost:3001';
+var BACKEND_URL = 'http://localhost:8000';
+var PROD_URL = null;
+
+function checkStatus(url, dotId, labelId, urlId) {
+  if (!url) {
+    document.getElementById(dotId).className = 'dot dot-gray';
+    document.getElementById(labelId).textContent = 'Not deployed';
+    return;
+  }
+  fetch(url, { mode: 'no-cors', cache: 'no-store' })
+    .then(function() {
+      document.getElementById(dotId).className = 'dot dot-green';
+      document.getElementById(labelId).textContent = '(up)';
+      if (urlId) {
+        var el = document.getElementById(urlId);
+        if (el) el.href = url;
+      }
     })
-    .catch(() => {
-      clearTimeout(timeout);
-      dot.className = 'status-dot offline';
-      dot.title = 'Offline';
+    .catch(function() {
+      document.getElementById(dotId).className = 'dot dot-red';
+      document.getElementById(labelId).textContent = '(down)';
     });
 }
 
-function pingAll() {
-  pingUrl('http://localhost:3001', 'dot-fe');
-  pingUrl('http://localhost:8000', 'dot-be');
+function checkAll() {
+  checkStatus(LOCAL_URL, 'local-dot', 'local-label', 'local-url');
+  checkStatus(BACKEND_URL, 'backend-dot', 'backend-label', 'backend-url');
+  if (PROD_URL) {
+    checkStatus(PROD_URL, 'prod-dot', 'prod-label', null);
+  }
 }
 
-pingAll();
-setInterval(pingAll, 5000);
+// Check on load, then every 5 seconds
+checkAll();
+setInterval(checkAll, 5000);
+
+// Update start button when local app is running
+setInterval(function() {
+  var localDot = document.getElementById('local-dot');
+  var backendDot = document.getElementById('backend-dot');
+  var btn = document.getElementById('start-btn');
+  var btnText = document.getElementById('start-btn-text');
+  if (localDot.classList.contains('dot-green') && backendDot.classList.contains('dot-green')) {
+    btn.classList.add('running');
+    btnText.textContent = 'Running';
+    btn.disabled = true;
+  } else {
+    btn.classList.remove('running');
+    if (btnText.textContent === 'Running') {
+      btnText.textContent = 'Copy Start Commands';
+    }
+    btn.disabled = false;
+  }
+}, 6000);
 </script>
+
 </body>
 </html>

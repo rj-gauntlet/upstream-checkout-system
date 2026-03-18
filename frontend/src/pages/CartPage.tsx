@@ -1,7 +1,64 @@
-import { Link } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import CartSummary from '../components/CartSummary';
-import { useNavigate } from 'react-router-dom';
+
+function DebouncedQuantityInput({ value, max, onChange }: { value: number; max: number; onChange: (qty: number) => void }) {
+  const [localValue, setLocalValue] = useState(String(value));
+  const [stockWarning, setStockWarning] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+
+  useEffect(() => {
+    setLocalValue(String(value));
+  }, [value]);
+
+  const commitChange = (qty: number) => {
+    const clamped = Math.max(1, Math.min(max, Math.floor(qty)));
+    setStockWarning(qty > max);
+    if (qty > max) setTimeout(() => setStockWarning(false), 2000);
+    if (clamped !== value) onChange(clamped);
+    setLocalValue(String(clamped));
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value.replace(/[^0-9]/g, '');
+    setLocalValue(raw);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (raw && parseInt(raw) > 0) {
+      debounceRef.current = setTimeout(() => commitChange(parseInt(raw)), 500);
+    }
+  };
+
+  const handleBlur = () => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    const num = parseInt(localValue) || 1;
+    commitChange(num);
+  };
+
+  return (
+    <div>
+      <div className="flex items-center border border-ocean/20 rounded">
+        <button
+          onClick={() => { if (debounceRef.current) clearTimeout(debounceRef.current); commitChange(value - 1); }}
+          className="px-2 py-1 text-gray-600 hover:bg-ocean-mist text-sm transition-colors"
+        >-</button>
+        <input
+          type="text"
+          inputMode="numeric"
+          value={localValue}
+          onChange={handleInputChange}
+          onBlur={handleBlur}
+          className="w-10 text-center py-1 text-sm border-x border-ocean/20 outline-none"
+        />
+        <button
+          onClick={() => { if (debounceRef.current) clearTimeout(debounceRef.current); commitChange(value + 1); }}
+          className="px-2 py-1 text-gray-600 hover:bg-ocean-mist text-sm transition-colors"
+        >+</button>
+      </div>
+      {stockWarning && <p className="text-xs text-amber-600 mt-1">Only {max} available</p>}
+    </div>
+  );
+}
 
 export default function CartPage() {
   const { cart, loading, updateQuantity, removeItem } = useCart();
@@ -68,21 +125,11 @@ export default function CartPage() {
                 <p className="text-sm text-ocean">${item.product.price} each</p>
 
                 <div className="flex items-center justify-between mt-2">
-                  <div className="flex items-center border border-ocean/20 rounded">
-                    <button
-                      onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}
-                      className="px-2 py-1 text-gray-600 hover:bg-ocean-mist text-sm transition-colors"
-                    >
-                      -
-                    </button>
-                    <span className="px-3 py-1 text-sm border-x border-ocean/20">{item.quantity}</span>
-                    <button
-                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                      className="px-2 py-1 text-gray-600 hover:bg-ocean-mist text-sm transition-colors"
-                    >
-                      +
-                    </button>
-                  </div>
+                  <DebouncedQuantityInput
+                    value={item.quantity}
+                    max={item.product.stock}
+                    onChange={(qty) => updateQuantity(item.id, qty)}
+                  />
 
                   <div className="flex items-center gap-4">
                     <span className="font-semibold text-gray-900">${item.subtotal}</span>

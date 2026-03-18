@@ -1,10 +1,14 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 
 export default function LoginPage() {
   const { login } = useAuth();
+  const { refreshCart } = useCart();
   const navigate = useNavigate();
+  const location = useLocation();
+  const redirectTo = (location.state as { from?: string })?.from || new URLSearchParams(location.search).get('redirect') || '/';
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -17,7 +21,8 @@ export default function LoginPage() {
 
     try {
       await login(username, password);
-      navigate('/');
+      await refreshCart();
+      navigate(redirectTo);
     } catch {
       setError('Invalid username or password.');
     } finally {

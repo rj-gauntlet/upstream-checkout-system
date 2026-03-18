@@ -27,7 +27,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <Link
       to={`/products/${product.slug}`}
-      className="group block bg-white rounded-xl border border-ocean/5 shadow-sm hover:shadow-lg hover:-translate-y-1.5 hover:border-current-accent/20 transition-all duration-300 overflow-hidden"
+      className="group flex flex-col bg-white rounded-xl border border-ocean/5 shadow-sm hover:shadow-lg hover:-translate-y-1.5 hover:border-current-accent/20 transition-all duration-300 overflow-hidden"
     >
       <div className="h-44 bg-gradient-to-br from-ocean-mist to-current-mist relative overflow-hidden">
         {product.primary_image ? (
@@ -55,14 +55,14 @@ export default function ProductCard({ product }: ProductCardProps) {
         )}
       </div>
 
-      <div className="p-4">
+      <div className="p-4 flex flex-col flex-1">
         <p className="text-current-accent text-xs font-semibold uppercase tracking-wider mb-1">
           {product.category_name}
         </p>
         <h3 className="font-[family-name:'Playfair_Display'] font-semibold text-gray-900 mb-1 group-hover:text-ocean transition-colors">
           {product.name}
         </h3>
-        <div className="flex items-center justify-between mt-3">
+        <div className="flex items-center justify-between mt-auto pt-3">
           <span className="text-lg font-bold text-ocean">${product.price}</span>
           <button
             onClick={handleAddToCart}

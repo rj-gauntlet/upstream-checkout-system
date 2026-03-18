@@ -46,12 +46,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [loadUser]);
 
+  const mergeCart = async () => {
+    try {
+      await apiClient.post('/cart/merge/');
+    } catch {
+      // No guest cart to merge — that's fine
+    }
+  };
+
   const login = async (username: string, password: string) => {
     const response = await apiClient.post('/auth/login/', { username, password });
     const newTokens: AuthTokens = response.data;
     localStorage.setItem('auth_tokens', JSON.stringify(newTokens));
     setTokens(newTokens);
     await loadUser();
+    await mergeCart();
   };
 
   const register = async (
@@ -72,6 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('auth_tokens', JSON.stringify(newTokens));
     setTokens(newTokens);
     setUser(newUser);
+    await mergeCart();
   };
 
   const logout = () => {

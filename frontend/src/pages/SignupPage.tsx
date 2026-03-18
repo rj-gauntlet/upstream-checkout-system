@@ -1,10 +1,14 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 
 export default function SignupPage() {
   const { register } = useAuth();
+  const { refreshCart } = useCart();
   const navigate = useNavigate();
+  const location = useLocation();
+  const redirectTo = (location.state as { from?: string })?.from || new URLSearchParams(location.search).get('redirect') || '/';
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -32,7 +36,8 @@ export default function SignupPage() {
         formData.first_name,
         formData.last_name
       );
-      navigate('/');
+      await refreshCart();
+      navigate(redirectTo);
     } catch {
       setError('Registration failed. Please try again.');
     } finally {
