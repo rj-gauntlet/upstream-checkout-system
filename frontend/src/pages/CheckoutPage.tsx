@@ -66,6 +66,7 @@ export default function CheckoutPage() {
 
       const newOrderNumber = orderRes.data.order_number;
       setOrderNumber(newOrderNumber);
+      localStorage.setItem('checkout_email', formData.email);
 
       if (paymentMethod === 'stripe') {
         // Get Stripe payment intent

@@ -13,11 +13,31 @@ export default function OrderConfirmationPage() {
 
   useEffect(() => {
     if (!orderNumber) return;
-    apiClient
-      .get(`/orders/${orderNumber}/`)
-      .then((res) => setOrder(res.data))
-      .catch(() => {})
-      .finally(() => setLoading(false));
+
+    const fetchOrder = async () => {
+      try {
+        // Try authenticated endpoint first
+        const res = await apiClient.get(`/orders/${orderNumber}/`);
+        setOrder(res.data);
+      } catch {
+        try {
+          // Fall back to guest lookup using email from localStorage
+          const checkoutEmail = localStorage.getItem('checkout_email');
+          if (checkoutEmail) {
+            const res = await apiClient.get('/orders/lookup/', {
+              params: { order_number: orderNumber, email: checkoutEmail },
+            });
+            setOrder(res.data);
+          }
+        } catch {
+          // Order not found
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrder();
   }, [orderNumber]);
 
   if (loading) {
