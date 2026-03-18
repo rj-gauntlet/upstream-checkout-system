@@ -97,28 +97,30 @@ export default function CheckoutPage() {
   };
 
   const handlePayPalCreateOrder = async () => {
-    if (!orderNumber) {
+    let currentOrderNumber = orderNumber;
+
+    if (!currentOrderNumber) {
       // Create order first if not already created
       const orderRes = await apiClient.post('/checkout/', {
         ...formData,
         payment_method: 'paypal',
       });
-      const num = orderRes.data.order_number;
-      setOrderNumber(num);
-
-      const paypalRes = await apiClient.post('/payments/paypal/create-order/', {
-        order_number: num,
-      });
-      return paypalRes.data.paypal_order_id;
+      currentOrderNumber = orderRes.data.order_number;
+      setOrderNumber(currentOrderNumber);
+      localStorage.setItem('checkout_email', formData.email);
     }
 
     const paypalRes = await apiClient.post('/payments/paypal/create-order/', {
-      order_number: orderNumber,
+      order_number: currentOrderNumber,
     });
     return paypalRes.data.paypal_order_id;
   };
 
-  const handlePayPalApprove = async () => {
+  const handlePayPalApprove = async (data: { orderID: string }) => {
+    // Capture the PayPal payment on our backend
+    await apiClient.post('/payments/paypal/capture/', {
+      paypal_order_id: data.orderID,
+    });
     await refreshCart();
     if (orderNumber) {
       navigate(`/order-confirmation/${orderNumber}`);

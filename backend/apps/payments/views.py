@@ -9,7 +9,7 @@ from apps.orders.models import Order
 from apps.orders.serializers import OrderSerializer
 
 from .services import (
-    capture_paypal_payment,
+    capture_paypal_order,
     create_paypal_order,
     create_stripe_payment_intent,
     handle_stripe_webhook,
@@ -85,8 +85,8 @@ class PayPalCreateOrderView(APIView):
             )
 
         try:
-            approval_url = create_paypal_order(order)
-            return Response({"approval_url": approval_url})
+            paypal_order_id = create_paypal_order(order)
+            return Response({"paypal_order_id": paypal_order_id})
         except Exception as e:
             return Response(
                 {"error": str(e)},
@@ -98,17 +98,16 @@ class PayPalCaptureView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        payment_id = request.data.get("payment_id")
-        payer_id = request.data.get("payer_id")
+        paypal_order_id = request.data.get("paypal_order_id")
 
-        if not payment_id or not payer_id:
+        if not paypal_order_id:
             return Response(
-                {"error": "payment_id and payer_id are required."},
+                {"error": "paypal_order_id is required."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         try:
-            order = capture_paypal_payment(payment_id, payer_id)
+            order = capture_paypal_order(paypal_order_id)
             serializer = OrderSerializer(order)
             return Response(serializer.data)
         except Exception as e:

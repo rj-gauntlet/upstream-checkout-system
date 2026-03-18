@@ -1,5 +1,5 @@
 import stripe
-import paypalrestsdk
+import requests
 from django.conf import settings
 
 from apps.orders.models import Order
@@ -8,23 +8,33 @@ from apps.orders.services import send_order_confirmation
 # Configure Stripe
 stripe.api_key = getattr(settings, "STRIPE_SECRET_KEY", "")
 
-# Configure PayPal
-paypalrestsdk.configure(
-    {
-        "mode": getattr(settings, "PAYPAL_MODE", "sandbox"),
-        "client_id": getattr(settings, "PAYPAL_CLIENT_ID", ""),
-        "client_secret": getattr(settings, "PAYPAL_CLIENT_SECRET", ""),
-    }
+# PayPal config
+PAYPAL_CLIENT_ID = getattr(settings, "PAYPAL_CLIENT_ID", "")
+PAYPAL_CLIENT_SECRET = getattr(settings, "PAYPAL_CLIENT_SECRET", "")
+PAYPAL_MODE = getattr(settings, "PAYPAL_MODE", "sandbox")
+PAYPAL_BASE_URL = (
+    "https://api-m.sandbox.paypal.com"
+    if PAYPAL_MODE == "sandbox"
+    else "https://api-m.paypal.com"
 )
 
 
-def create_stripe_payment_intent(order):
-    """Create a Stripe PaymentIntent for the given order.
+def _get_paypal_access_token():
+    """Get an OAuth2 access token from PayPal."""
+    response = requests.post(
+        f"{PAYPAL_BASE_URL}/v1/oauth2/token",
+        auth=(PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET),
+        data={"grant_type": "client_credentials"},
+        headers={"Accept": "application/json"},
+    )
+    response.raise_for_status()
+    return response.json()["access_token"]
 
-    Returns the PaymentIntent object with client_secret for frontend confirmation.
-    """
+
+def create_stripe_payment_intent(order):
+    """Create a Stripe PaymentIntent for the given order."""
     intent = stripe.PaymentIntent.create(
-        amount=int(order.total * 100),  # Stripe expects amount in cents
+        amount=int(order.total * 100),
         currency="usd",
         metadata={
             "order_id": str(order.id),
@@ -40,10 +50,7 @@ def create_stripe_payment_intent(order):
 
 
 def handle_stripe_webhook(payload, sig_header):
-    """Handle incoming Stripe webhook events.
-
-    Processes payment_intent.succeeded and payment_intent.payment_failed events.
-    """
+    """Handle incoming Stripe webhook events."""
     webhook_secret = getattr(settings, "STRIPE_WEBHOOK_SECRET", "")
     event = stripe.Webhook.construct_event(payload, sig_header, webhook_secret)
 
@@ -71,78 +78,85 @@ def handle_stripe_webhook(payload, sig_header):
 
 
 def create_paypal_order(order):
-    """Create a PayPal Payment for the given order.
+    """Create a PayPal v2 Order and return the PayPal order ID."""
+    access_token = _get_paypal_access_token()
 
-    Returns the approval URL for redirecting the user to PayPal.
-    """
-    payment = paypalrestsdk.Payment(
-        {
-            "intent": "sale",
-            "payer": {"payment_method": "paypal"},
-            "redirect_urls": {
-                "return_url": getattr(
-                    settings, "PAYPAL_RETURN_URL", "http://localhost:3000/checkout/success"
-                ),
-                "cancel_url": getattr(
-                    settings, "PAYPAL_CANCEL_URL", "http://localhost:3000/checkout/cancel"
-                ),
-            },
-            "transactions": [
-                {
-                    "item_list": {
-                        "items": [
-                            {
-                                "name": item.product_name,
-                                "sku": str(item.id),
-                                "price": str(item.product_price),
-                                "currency": "USD",
-                                "quantity": item.quantity,
-                            }
-                            for item in order.items.all()
-                        ]
-                    },
-                    "amount": {
-                        "total": str(order.total),
-                        "currency": "USD",
-                        "details": {
-                            "subtotal": str(order.subtotal),
-                            "tax": str(order.tax),
+    payload = {
+        "intent": "CAPTURE",
+        "purchase_units": [
+            {
+                "reference_id": order.order_number,
+                "description": f"Upstream Literacy Order #{order.order_number}",
+                "amount": {
+                    "currency_code": "USD",
+                    "value": str(order.total),
+                    "breakdown": {
+                        "item_total": {
+                            "currency_code": "USD",
+                            "value": str(order.subtotal),
+                        },
+                        "tax_total": {
+                            "currency_code": "USD",
+                            "value": str(order.tax),
                         },
                     },
-                    "description": f"Upstream Literacy Order #{order.order_number}",
-                }
-            ],
-        }
+                },
+                "items": [
+                    {
+                        "name": item.product_name[:127],
+                        "unit_amount": {
+                            "currency_code": "USD",
+                            "value": str(item.product_price),
+                        },
+                        "quantity": str(item.quantity),
+                    }
+                    for item in order.items.all()
+                ],
+            }
+        ],
+    }
+
+    response = requests.post(
+        f"{PAYPAL_BASE_URL}/v2/checkout/orders",
+        json=payload,
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {access_token}",
+        },
     )
+    response.raise_for_status()
+    data = response.json()
 
-    if payment.create():
-        order.payment_id = payment.id
-        order.payment_status = "created"
-        order.save(update_fields=["payment_id", "payment_status"])
+    order.payment_id = data["id"]
+    order.payment_status = "created"
+    order.save(update_fields=["payment_id", "payment_status"])
 
-        for link in payment.links:
-            if link.rel == "approval_url":
-                return link.href
-
-    raise Exception(f"PayPal payment creation failed: {payment.error}")
+    return data["id"]
 
 
-def capture_paypal_payment(payment_id, payer_id):
-    """Capture (execute) a PayPal payment after user approval.
+def capture_paypal_order(paypal_order_id):
+    """Capture a PayPal v2 Order after buyer approval."""
+    access_token = _get_paypal_access_token()
 
-    Updates the order status on successful capture.
-    """
-    payment = paypalrestsdk.Payment.find(payment_id)
+    response = requests.post(
+        f"{PAYPAL_BASE_URL}/v2/checkout/orders/{paypal_order_id}/capture",
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {access_token}",
+        },
+    )
+    response.raise_for_status()
+    data = response.json()
 
-    if payment.execute({"payer_id": payer_id}):
+    if data["status"] == "COMPLETED":
         try:
-            order = Order.objects.get(payment_id=payment_id)
+            order = Order.objects.get(payment_id=paypal_order_id)
             order.status = Order.Status.PAID
             order.payment_status = "completed"
             order.save(update_fields=["status", "payment_status"])
             send_order_confirmation(order)
             return order
         except Order.DoesNotExist:
-            raise Exception("Order not found for this payment.")
-    else:
-        raise Exception(f"PayPal payment capture failed: {payment.error}")
+            raise Exception("Order not found for this PayPal order.")
+
+    raise Exception(f"PayPal capture not completed. Status: {data['status']}")
