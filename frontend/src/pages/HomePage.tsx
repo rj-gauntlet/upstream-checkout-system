@@ -3,11 +3,16 @@ import { Link } from 'react-router-dom';
 import apiClient from '../api/client';
 import type { Product, Category } from '../types';
 import ProductCard from '../components/ProductCard';
+import { trackEvent } from '../utils/analytics';
 
 export default function HomePage() {
   const [featured, setFeatured] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    trackEvent('page_view', { metadata: { page: 'home' } });
+  }, []);
 
   useEffect(() => {
     Promise.all([

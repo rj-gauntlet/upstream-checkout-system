@@ -18,3 +18,16 @@ class AnalyticsEventAdmin(ModelAdmin):
         "metadata",
         "created_at",
     ]
+    date_hierarchy = "created_at"
+
+    class Media:
+        pass
+
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        extra_context["subtitle"] = (
+            "Dashboard API available at /api/v1/analytics/dashboard/ "
+            "— endpoints: summary/, revenue-by-category/, popular-products/, "
+            "recent-orders/, events-over-time/"
+        )
+        return super().changelist_view(request, extra_context=extra_context)

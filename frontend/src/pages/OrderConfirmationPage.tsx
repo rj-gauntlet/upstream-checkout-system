@@ -4,6 +4,7 @@ import apiClient from '../api/client';
 import type { Order } from '../types';
 import OrderStatusBadge from '../components/OrderStatusBadge';
 import { useAuth } from '../context/AuthContext';
+import { trackEvent } from '../utils/analytics';
 
 export default function OrderConfirmationPage() {
   const { orderNumber } = useParams<{ orderNumber: string }>();
@@ -19,6 +20,7 @@ export default function OrderConfirmationPage() {
         // Try authenticated endpoint first
         const res = await apiClient.get(`/orders/${orderNumber}/`);
         setOrder(res.data);
+        trackEvent('purchase_complete', { order_id: orderNumber });
       } catch {
         try {
           // Fall back to guest lookup using email from localStorage
@@ -28,6 +30,7 @@ export default function OrderConfirmationPage() {
               params: { order_number: orderNumber, email: checkoutEmail },
             });
             setOrder(res.data);
+            trackEvent('purchase_complete', { order_id: orderNumber });
           }
         } catch {
           // Order not found

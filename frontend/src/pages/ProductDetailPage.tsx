@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import apiClient from '../api/client';
 import type { Product } from '../types';
 import { useCart } from '../context/CartContext';
+import { trackEvent } from '../utils/analytics';
 
 export default function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -12,6 +13,11 @@ export default function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [adding, setAdding] = useState(false);
   const [added, setAdded] = useState(false);
+
+  useEffect(() => {
+    if (!slug) return;
+    trackEvent('page_view', { metadata: { page: 'product', slug } });
+  }, [slug]);
 
   useEffect(() => {
     if (!slug) return;

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
@@ -10,6 +10,7 @@ import CheckoutForm, { type CheckoutFormData } from '../components/CheckoutForm'
 import CartSummary from '../components/CartSummary';
 import StripePaymentForm from '../components/StripePaymentForm';
 import PayPalButton from '../components/PayPalButton';
+import { trackEvent } from '../utils/analytics';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || '');
 const paypalClientId = import.meta.env.VITE_PAYPAL_CLIENT_ID || '';
@@ -36,6 +37,10 @@ export default function CheckoutPage() {
   const [error, setError] = useState<string | null>(null);
   const [orderNumber, setOrderNumber] = useState<string | null>(null);
 
+  useEffect(() => {
+    trackEvent('checkout_start');
+  }, []);
+
   const paypalOptions = useMemo(() => ({
     clientId: paypalClientId,
     currency: 'USD',
@@ -56,6 +61,8 @@ export default function CheckoutPage() {
     e.preventDefault();
     setSubmitting(true);
     setError(null);
+
+    trackEvent('payment_initiated', { metadata: { method: paymentMethod } });
 
     try {
       // Create order
@@ -98,6 +105,8 @@ export default function CheckoutPage() {
 
   const handlePayPalCreateOrder = async () => {
     let currentOrderNumber = orderNumber;
+
+    trackEvent('payment_initiated', { metadata: { method: 'paypal' } });
 
     if (!currentOrderNumber) {
       // Create order first if not already created

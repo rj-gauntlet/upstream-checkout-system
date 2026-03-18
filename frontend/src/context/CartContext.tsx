@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
 import apiClient from '../api/client';
 import type { Cart } from '../types';
+import { trackEvent } from '../utils/analytics';
 
 interface CartContextType {
   cart: Cart | null;
@@ -34,6 +35,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [refreshCart]);
 
   const addItem = async (productId: number, quantity: number = 1) => {
+    trackEvent('add_to_cart', { product_id: productId });
     await apiClient.post('/cart/items/', { product_id: productId, quantity });
     await refreshCart();
   };
@@ -44,6 +46,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const removeItem = async (itemId: number) => {
+    trackEvent('remove_from_cart', { product_id: itemId });
     await apiClient.delete(`/cart/items/${itemId}/`);
     await refreshCart();
   };
