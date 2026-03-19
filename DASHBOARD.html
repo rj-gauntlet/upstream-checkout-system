@@ -141,13 +141,14 @@ a:hover{text-decoration:underline}
     <div class="status-item">
       <span class="dot dot-gray" id="backend-dot"></span>
       <span>Backend:</span>
-      <a href="http://localhost:8000" target="_blank" id="backend-url">http://localhost:8000</a>
+      <a href="https://backend-production-7531.up.railway.app" target="_blank" id="backend-url">https://backend-production-7531.up.railway.app</a>
       <span style="color:#6b7280;margin-left:4px" id="backend-label">(checking...)</span>
     </div>
     <div class="status-item">
-      <span class="dot dot-gray" id="prod-dot"></span>
+      <span class="dot dot-green" id="prod-dot"></span>
       <span>Production:</span>
-      <span style="color:#6b7280" id="prod-label">Not deployed</span>
+      <a href="https://frontend-production-1c67.up.railway.app" target="_blank" id="prod-url">https://frontend-production-1c67.up.railway.app</a>
+      <span style="color:#6b7280;margin-left:4px" id="prod-label">(checking...)</span>
     </div>
     <button class="start-btn" id="start-btn" onclick="copyStartCommand()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
@@ -167,13 +168,13 @@ a:hover{text-decoration:underline}
     <span class="pipeline-arrow">&#8594;</span>
     <div class="pipeline-stage complete"><span class="check">&#10003;</span> Test/QA</div>
     <span class="pipeline-arrow">&#8594;</span>
-    <div class="pipeline-stage current"><span class="dot dot-amber" style="width:8px;height:8px"></span> Ship</div>
+    <div class="pipeline-stage complete"><span class="check">&#10003;</span> Ship</div>
   </div>
   <div class="stats-row">
     <div class="stat"><div class="stat-value">48/48</div><div class="stat-label">Tasks Done</div></div>
     <div class="stat"><div class="stat-value">0</div><div class="stat-label">Remaining</div></div>
     <div class="stat"><div class="stat-value">~43h</div><div class="stat-label">Est. Duration</div></div>
-    <div class="stat"><div class="stat-value">5</div><div class="stat-label">Phases</div></div>
+    <div class="stat"><div class="stat-value">5/5</div><div class="stat-label">Stages Done</div></div>
   </div>
 </div>
 
@@ -182,7 +183,7 @@ a:hover{text-decoration:underline}
   <div class="tab active" data-tab="phases">Phases</div>
   <div class="tab" data-tab="requirements">Requirements</div>
   <div class="tab" data-tab="artifacts">Artifacts</div>
-  <div class="tab" data-tab="activity">Activity <span class="badge">7</span></div>
+  <div class="tab" data-tab="activity">Activity <span class="badge">10</span></div>
 </div>
 
 <!-- TAB: PHASES -->
@@ -447,8 +448,24 @@ a:hover{text-decoration:underline}
     <div class="activity-item">
       <div class="activity-dot" style="background:#34d399"></div>
       <div class="activity-content">
+        <strong>Shipped to Railway</strong>
+        <p>Frontend deployed to https://frontend-production-1c67.up.railway.app and backend to https://backend-production-7531.up.railway.app. All 5 pipeline stages complete. Project is live in production.</p>
+      </div>
+      <div class="activity-time">2026-03-18</div>
+    </div>
+    <div class="activity-item">
+      <div class="activity-dot" style="background:#34d399"></div>
+      <div class="activity-content">
         <strong>Test/QA passed</strong>
-        <p>Overall verdict: Ready to ship. Smoke 3/3, Integration 20/22, E2E 6/6. No console errors.</p>
+        <p>27/28 API tests passed (1 endpoint path deviation by design). E2E Stripe + PayPal verified end-to-end. 6/6 browser flows pass. 0 console errors. Verdict: Ready to ship.</p>
+      </div>
+      <div class="activity-time">2026-03-18</div>
+    </div>
+    <div class="activity-item">
+      <div class="activity-dot" style="background:#60a5fa"></div>
+      <div class="activity-content">
+        <strong>UX fixes committed</strong>
+        <p>Cart merge on login, product card alignment, typeable quantity inputs, post-auth redirect to intended page, collapsible checkout order items.</p>
       </div>
       <div class="activity-time">2026-03-18</div>
     </div>
@@ -539,8 +556,8 @@ function copyStartCommand() {
 
 // Live status checking
 var LOCAL_URL = 'http://localhost:3001';
-var BACKEND_URL = 'http://localhost:8000';
-var PROD_URL = null;
+var BACKEND_URL = 'https://backend-production-7531.up.railway.app';
+var PROD_URL = 'https://frontend-production-1c67.up.railway.app';
 
 function checkStatus(url, dotId, labelId, urlId) {
   if (!url) {
@@ -567,7 +584,7 @@ function checkAll() {
   checkStatus(LOCAL_URL, 'local-dot', 'local-label', 'local-url');
   checkStatus(BACKEND_URL, 'backend-dot', 'backend-label', 'backend-url');
   if (PROD_URL) {
-    checkStatus(PROD_URL, 'prod-dot', 'prod-label', null);
+    checkStatus(PROD_URL, 'prod-dot', 'prod-label', 'prod-url');
   }
 }
 
