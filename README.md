@@ -96,6 +96,16 @@ npm run dev
 
 The frontend dev server will start at `http://localhost:5173` and proxy API requests to the Django backend at `http://localhost:8000`.
 
+## Production Deployment
+
+The application is deployed on [Railway](https://railway.com):
+
+| Service | URL |
+|---------|-----|
+| **Frontend** | [https://frontend-production-1c67.up.railway.app](https://frontend-production-1c67.up.railway.app) |
+| **Backend API** | [https://backend-production-7531.up.railway.app](https://backend-production-7531.up.railway.app) |
+| **Database** | PostgreSQL 16 on Railway (private network) |
+
 ### Environment Variables
 
 Create a `.env` file in the project root (see `.env.example` for reference):
