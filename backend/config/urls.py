@@ -13,5 +13,7 @@ urlpatterns = [
     path('api/v1/', include('apps.analytics.urls')),
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Serve media files in both dev and production
+# In production on Railway, WhiteNoise handles static but not media,
+# so we serve media via Django's static helper
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

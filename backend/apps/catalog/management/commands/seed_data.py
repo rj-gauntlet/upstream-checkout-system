@@ -1,6 +1,10 @@
+import os
+import shutil
+
+from django.conf import settings
 from django.core.management.base import BaseCommand
 
-from apps.catalog.models import Category, Product
+from apps.catalog.models import Category, Product, ProductImage
 
 
 class Command(BaseCommand):
@@ -25,6 +29,9 @@ class Command(BaseCommand):
 
         self.stdout.write("Seeding products...")
         self._create_products(categories)
+
+        self.stdout.write("Seeding product images...")
+        self._create_product_images()
 
         self.stdout.write(self.style.SUCCESS("Seed data created successfully."))
 
@@ -225,3 +232,33 @@ class Command(BaseCommand):
                 sku=product_data["sku"],
                 defaults=product_data,
             )
+
+    def _create_product_images(self):
+        """Copy pre-generated images to media dir and create ProductImage records."""
+        # Source: bundled images shipped with the Docker image
+        source_dir = os.path.join(settings.BASE_DIR, "seed_images")
+        dest_dir = os.path.join(settings.MEDIA_ROOT, "products")
+        os.makedirs(dest_dir, exist_ok=True)
+
+        for product in Product.objects.all():
+            # Skip if product already has images
+            if product.images.exists():
+                continue
+
+            filename = f"{product.sku.lower().replace('-', '_')}.jpg"
+            source_path = os.path.join(source_dir, filename)
+
+            if os.path.exists(source_path):
+                # Copy image to media directory
+                dest_path = os.path.join(dest_dir, filename)
+                shutil.copy2(source_path, dest_path)
+
+                # Create ProductImage record
+                ProductImage.objects.create(
+                    product=product,
+                    image=f"products/{filename}",
+                    alt_text=product.name,
+                    is_primary=True,
+                    sort_order=0,
+                )
+                self.stdout.write(f"  Image: {filename} -> {product.name}")
