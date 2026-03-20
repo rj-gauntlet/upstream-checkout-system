@@ -1,7 +1,10 @@
+from django.core.management import call_command
 from django.db.models import Count
 from django_filters import rest_framework as filters
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .models import Category, Product
 from .serializers import (
@@ -68,6 +71,22 @@ class ProductDetailView(generics.RetrieveAPIView):
             Product.objects.filter(is_active=True)
             .select_related("category")
             .prefetch_related("images")
+        )
+
+
+class SeedDataView(APIView):
+    """Temporary endpoint to seed the database. Remove after use."""
+
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        call_command("seed_data")
+        return Response(
+            {
+                "status": "success",
+                "categories": Category.objects.count(),
+                "products": Product.objects.count(),
+            }
         )
 
 

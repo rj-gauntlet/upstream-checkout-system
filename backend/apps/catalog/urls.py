@@ -22,4 +22,5 @@ urlpatterns = [
         views.ProductDetailView.as_view(),
         name="product-detail",
     ),
+    path("seed/", views.SeedDataView.as_view(), name="seed-data"),
 ]
