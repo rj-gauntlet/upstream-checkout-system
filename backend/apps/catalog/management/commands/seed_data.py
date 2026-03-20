@@ -234,26 +234,29 @@ class Command(BaseCommand):
             )
 
     def _create_product_images(self):
-        """Copy pre-generated images to media dir and create ProductImage records."""
-        # Source: bundled images shipped with the Docker image
+        """Copy pre-generated images to media dir and create ProductImage records.
+
+        Always copies files from seed_images/ to media/products/ because
+        Railway containers have ephemeral filesystems — files from previous
+        deploys are lost even though DB records persist.
+        """
         source_dir = os.path.join(settings.BASE_DIR, "seed_images")
         dest_dir = os.path.join(settings.MEDIA_ROOT, "products")
         os.makedirs(dest_dir, exist_ok=True)
 
         for product in Product.objects.all():
-            # Skip if product already has images
-            if product.images.exists():
-                continue
-
             filename = f"{product.sku.lower().replace('-', '_')}.jpg"
             source_path = os.path.join(source_dir, filename)
+            dest_path = os.path.join(dest_dir, filename)
 
-            if os.path.exists(source_path):
-                # Copy image to media directory
-                dest_path = os.path.join(dest_dir, filename)
-                shutil.copy2(source_path, dest_path)
+            if not os.path.exists(source_path):
+                continue
 
-                # Create ProductImage record
+            # Always copy the file (container filesystem is ephemeral)
+            shutil.copy2(source_path, dest_path)
+
+            # Create DB record only if it doesn't exist
+            if not product.images.exists():
                 ProductImage.objects.create(
                     product=product,
                     image=f"products/{filename}",
@@ -261,4 +264,4 @@ class Command(BaseCommand):
                     is_primary=True,
                     sort_order=0,
                 )
-                self.stdout.write(f"  Image: {filename} -> {product.name}")
+            self.stdout.write(f"  Image: {filename} -> {product.name}")
