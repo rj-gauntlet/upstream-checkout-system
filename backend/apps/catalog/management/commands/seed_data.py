@@ -22,14 +22,14 @@ class Command(BaseCommand):
             self.stdout.write(
                 self.style.WARNING("Products already exist. Skipping seed.")
             )
-            return
+        else:
+            self.stdout.write("Seeding categories...")
+            categories = self._create_categories()
 
-        self.stdout.write("Seeding categories...")
-        categories = self._create_categories()
+            self.stdout.write("Seeding products...")
+            self._create_products(categories)
 
-        self.stdout.write("Seeding products...")
-        self._create_products(categories)
-
+        # Always ensure product images exist
         self.stdout.write("Seeding product images...")
         self._create_product_images()
 
