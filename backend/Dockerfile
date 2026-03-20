@@ -14,4 +14,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["sh", "-c", "python manage.py migrate --noinput 2>&1 && python manage.py seed_data 2>&1 || true && gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120 --log-level info"]
+RUN python manage.py collectstatic --noinput 2>/dev/null || true
+
+CMD ["sh", "-c", "python manage.py migrate --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --timeout 120 --log-level info"]
