@@ -46,6 +46,7 @@ class ProductListSerializer(serializers.ModelSerializer):
 
 class ProductDetailSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(many=True, read_only=True)
+    primary_image = serializers.SerializerMethodField()
     category_name = serializers.CharField(source="category.name", read_only=True)
     in_stock = serializers.BooleanField(read_only=True)
 
@@ -64,10 +65,22 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             "in_stock",
             "category",
             "category_name",
+            "primary_image",
             "images",
             "created_at",
             "updated_at",
         ]
+
+    def get_primary_image(self, obj):
+        img = obj.images.filter(is_primary=True).first()
+        if img is None:
+            img = obj.images.first()
+        if img:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(img.image.url)
+            return img.image.url
+        return None
 
 
 class CategorySerializer(serializers.ModelSerializer):
