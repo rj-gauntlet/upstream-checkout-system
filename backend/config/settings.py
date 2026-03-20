@@ -14,6 +14,10 @@ DEBUG = os.environ.get('DEBUG', 'False').lower() in ('true', '1')
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',') if os.environ.get('CSRF_TRUSTED_ORIGINS') else []
 
+# Railway terminates TLS at the load balancer — tell Django to trust
+# the X-Forwarded-Proto header so build_absolute_uri() generates https:// URLs
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 INSTALLED_APPS = [
     'unfold',
     'django.contrib.admin',
