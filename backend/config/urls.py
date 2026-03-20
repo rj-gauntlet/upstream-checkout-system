@@ -1,7 +1,7 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf import settings
-from django.conf.urls.static import static
+from django.views.static import serve
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -14,6 +14,8 @@ urlpatterns = [
 ]
 
 # Serve media files in both dev and production
-# In production on Railway, WhiteNoise handles static but not media,
-# so we serve media via Django's static helper
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# django.conf.urls.static.static() returns [] when DEBUG=False,
+# so we use re_path + serve directly to ensure media works on Railway
+urlpatterns += [
+    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+]
