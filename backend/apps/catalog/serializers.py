@@ -37,7 +37,10 @@ class ProductListSerializer(serializers.ModelSerializer):
         if img is None:
             img = obj.images.first()
         if img:
-            return ProductImageSerializer(img).data
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(img.image.url)
+            return img.image.url
         return None
 
 
